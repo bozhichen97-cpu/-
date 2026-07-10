@@ -1777,6 +1777,16 @@ main {
     display: none;
   }
 
+  .nav .mobile-menu-button {
+    position: absolute;
+    top: 50%;
+    right: 112px;
+    width: 42px;
+    height: 42px;
+    transform: translateY(-50%);
+    z-index: 3;
+  }
+
   .navLinks {
     display: none;
   }
@@ -1949,6 +1959,16 @@ main {
 
   .timelineRail {
     display: none;
+  }
+
+  .timelineStack .scroll-stack-inner {
+    min-height: 0;
+    padding: 24px 0 40px;
+  }
+
+  .timelineStack .scroll-stack-card {
+    transform: none !important;
+    filter: none !important;
   }
 
   .timelineStackCard {

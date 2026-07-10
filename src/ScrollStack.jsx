@@ -196,6 +196,20 @@ const ScrollStack = ({
     );
     cardsRef.current = cards;
 
+    const useStableMobileFlow = useWindowScroll && window.matchMedia('(max-width: 760px), (pointer: coarse)').matches;
+    if (useStableMobileFlow) {
+      cards.forEach((card, i) => {
+        card.style.marginBottom = i < cards.length - 1 ? '18px' : '0';
+        card.style.transform = 'none';
+        card.style.filter = 'none';
+        card.style.willChange = 'auto';
+      });
+      return () => {
+        cardsRef.current = [];
+        lastTransformsRef.current.clear();
+      };
+    }
+
     cards.forEach((card, i) => {
       if (i < cards.length - 1) card.style.marginBottom = `${itemDistance}px`;
       card.style.willChange = 'transform, filter';
