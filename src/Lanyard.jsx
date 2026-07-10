@@ -108,10 +108,10 @@ export default function Lanyard({
   return (
     <div className="lanyard-wrapper" ref={wrapperRef}>
       <Canvas
-        camera={{ position, fov }}
-        dpr={[1, isMobile ? 1 : 1.5]}
+        camera={{ position, fov: isMobile ? Math.min(fov, 24) : fov }}
+        dpr={[1, 1.5]}
         frameloop={isVisible ? 'always' : 'never'}
-        style={{ touchAction: isMobile ? 'none' : 'auto' }}
+        style={{ touchAction: isMobile ? 'pan-y' : 'auto' }}
         gl={{ alpha: transparent }}
         onCreated={({ gl }) => gl.setClearColor(new THREE.Color(0x000000), transparent ? 0 : 1)}
       >

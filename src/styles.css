@@ -257,6 +257,8 @@ main {
 
 .nav .pill-logo,
 .nav .pill-nav-items,
+.nav .mobile-menu-button,
+.nav .mobile-menu-popover,
 .nav .outlineButton {
   pointer-events: auto;
 }
@@ -418,7 +420,7 @@ main {
   top: 0.06em;
   left: -0.035em;
   right: -0.02em;
-  z-index: 0;
+  z-index: 4;
   color: rgba(227, 39, 45, 0.76);
   font-family: Impact, "Arial Black", sans-serif;
   font-size: clamp(138px, 18vw, 338px);
@@ -486,7 +488,7 @@ main {
   position: absolute;
   left: 50%;
   top: -94px;
-  z-index: 3;
+  z-index: 2;
   width: 100vw;
   max-width: 1320px;
   height: calc(100vh + 94px);
@@ -1874,20 +1876,20 @@ main {
   .heroLanyard {
     left: 50%;
     top: 90px;
-    width: 138vw;
+    width: 150vw;
     max-width: none;
-    height: 500px;
-    opacity: 0.94;
-    touch-action: none;
+    height: 520px;
+    opacity: 1;
+    touch-action: pan-y;
   }
 
   .heroLanyard .lanyard-wrapper {
     min-height: 0;
-    touch-action: none;
+    touch-action: pan-y;
   }
 
   .heroLanyard canvas {
-    touch-action: none !important;
+    touch-action: pan-y !important;
     -webkit-user-select: none;
     user-select: none;
   }
@@ -2089,9 +2091,27 @@ main {
   }
 
   .projectModal {
+    position: relative;
+    inset: auto;
     width: calc(100vw - 20px);
     height: calc(100dvh - 20px);
+    margin: auto;
     border-radius: 18px;
+    animation: none;
+    transform: none;
+    clip-path: none;
+  }
+
+  .projectModalLayer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    animation-duration: 220ms;
+  }
+
+  .projectModalGhost {
+    display: none;
   }
 
   .projectModalHeader {
@@ -2102,8 +2122,29 @@ main {
     font-size: 40px;
   }
 
-  .projectModalGallery {
-    padding: 16px 12px 36px;
+  .projectModalScroll {
+    padding: 14px 12px 30px;
+    scroll-snap-type: y proximity;
+  }
+
+  .projectModalImages {
+    gap: 14px;
+  }
+
+  .projectModalImage {
+    min-height: 0;
+    display: block;
+    border-radius: 12px;
+    animation: none;
+    scroll-snap-align: start;
+  }
+
+  .projectModalImage img {
+    width: 100%;
+    max-width: none;
+    max-height: none;
+    height: auto;
+    object-fit: initial;
   }
 
   .verticalTimeline {
