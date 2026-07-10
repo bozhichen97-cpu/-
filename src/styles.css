@@ -1747,6 +1747,36 @@ main {
 }
 
 @media (max-width: 760px) {
+  html {
+    scroll-snap-type: none;
+  }
+
+  body {
+    overflow-x: hidden;
+  }
+
+  .siteLoader {
+    padding: 24px 20px 30px;
+  }
+
+  .siteLoaderCount {
+    justify-self: center;
+    font-size: clamp(118px, 43vw, 168px);
+  }
+
+  .nav {
+    height: 72px;
+  }
+
+  .nav .pill-logo {
+    transform: translateY(-50%) scale(0.86);
+    transform-origin: left center;
+  }
+
+  .nav .pill-nav-items {
+    display: none;
+  }
+
   .navLinks {
     display: none;
   }
@@ -1760,8 +1790,10 @@ main {
   }
 
   .outlineButton {
-    padding: 0 18px;
-    min-width: 104px;
+    min-width: 96px;
+    min-height: 42px;
+    padding: 0 14px;
+    font-size: 12px;
   }
 
   .hero,
@@ -1778,44 +1810,83 @@ main {
   }
 
   .heroStage {
-    min-height: 980px;
+    min-height: 1080px;
   }
 
   .heroTopline {
-    flex-direction: column;
-    gap: 12px;
+    padding-top: 16px;
+    font-size: 9px;
+  }
+
+  .heroTopline span:last-child {
+    display: none;
   }
 
   .heroBackdropTitle {
-    top: 110px;
-    font-size: 104px;
+    top: 64px;
+    left: -2px;
+    right: auto;
+    font-size: clamp(72px, 24vw, 94px);
     writing-mode: horizontal-tb;
-    white-space: normal;
+    white-space: nowrap;
     line-height: 0.82;
   }
 
   .heroIntroBlock {
+    top: 580px;
+    bottom: auto;
     width: 100%;
-    bottom: 170px;
+  }
+
+  .scriptText {
+    font-size: 32px;
   }
 
   .heroIntroBlock h1 {
-    font-size: 72px;
+    font-size: clamp(58px, 18vw, 70px);
+  }
+
+  .heroIntroBlock h2 {
+    margin: 14px 0 10px;
+    font-size: 21px;
+  }
+
+  .heroIntroBlock p:not(.scriptText) {
+    max-width: none;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  .heroAvailability {
+    margin-top: 14px;
   }
 
   .heroLanyard {
     left: 50%;
-    top: -94px;
-    width: 112vw;
+    top: 90px;
+    width: 138vw;
     max-width: none;
-    height: calc(100vh + 94px);
-    opacity: 0.78;
+    height: 500px;
+    opacity: 0.94;
+    touch-action: none;
+  }
+
+  .heroLanyard .lanyard-wrapper {
+    min-height: 0;
+    touch-action: none;
+  }
+
+  .heroLanyard canvas {
+    touch-action: none !important;
+    -webkit-user-select: none;
+    user-select: none;
   }
 
   .heroMetrics {
     left: 0;
     right: auto;
-    bottom: 70px;
+    top: 982px;
+    bottom: auto;
     width: 100%;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -1825,11 +1896,33 @@ main {
   .heroMetrics div {
     grid-template-columns: 1fr;
     gap: 8px;
-    padding: 14px 0;
+    padding: 12px 0;
   }
 
   .heroMetrics strong {
-    font-size: 30px;
+    font-size: 26px;
+  }
+
+  .heroMetrics span {
+    font-size: 8px;
+  }
+
+  .heroActionsNew {
+    top: 908px;
+    bottom: auto;
+    width: 100%;
+    flex-direction: row;
+    gap: 14px;
+    margin: 0;
+  }
+
+  .heroActionsNew .solidButton {
+    min-height: 46px;
+    padding: 0 18px;
+  }
+
+  .heroActionsNew .textButton {
+    font-size: 11px;
   }
 
   .projectGrid,
@@ -1839,7 +1932,7 @@ main {
   }
 
   .profileAside {
-    height: 330px;
+    height: 350px;
   }
 
   .timelineStack {
@@ -1851,7 +1944,7 @@ main {
   }
 
   .experienceTimeline {
-    padding: 0 18px;
+    padding: 0;
   }
 
   .timelineRail {
@@ -1868,8 +1961,8 @@ main {
   }
 
   .timelineStack article {
-    min-height: 430px;
-    padding: 30px 24px;
+    min-height: 0;
+    padding: 26px 20px;
   }
 
   .timelineStack article h3 {
@@ -1877,7 +1970,7 @@ main {
   }
 
   .portraitCard {
-    width: min(72vw, 280px);
+    width: 100%;
     height: auto;
     min-height: 0;
     aspect-ratio: 3 / 4;
@@ -1885,6 +1978,112 @@ main {
 
   .aboutGrid {
     gap: 28px;
+  }
+
+  .aboutGrid > .tilted-card-figure {
+    width: min(76vw, 280px) !important;
+    height: min(102vw, 374px) !important;
+    justify-self: center;
+  }
+
+  .section {
+    margin-top: 18px;
+    margin-bottom: 18px;
+    padding-top: 58px;
+    padding-bottom: 58px;
+    border-radius: 20px;
+  }
+
+  .sectionHead {
+    gap: 18px;
+    margin-bottom: 24px;
+  }
+
+  .sectionHead h2,
+  .statement h2 {
+    font-size: clamp(44px, 15vw, 62px);
+  }
+
+  .projectGrid {
+    gap: 22px;
+  }
+
+  .projectGlowCard,
+  .projectCard {
+    min-height: 460px;
+  }
+
+  .projectImage {
+    min-height: 350px;
+    padding: 24px;
+  }
+
+  .projectCard.isCaseCover .projectTitle {
+    font-size: 40px;
+  }
+
+  .strengths {
+    gap: 32px;
+  }
+
+  .strengthGrid {
+    min-height: 0;
+    gap: 12px;
+  }
+
+  .strengthGlowCard,
+  .strengthGrid:hover .strengthGlowCard,
+  .strengthGrid .strengthGlowCard:hover {
+    height: auto;
+    min-height: 148px;
+    transform: none;
+  }
+
+  .strengthGrid article {
+    min-height: 148px;
+    padding: 20px 18px;
+  }
+
+  .strengthGrid p,
+  .strengthGlowCard:hover p {
+    max-height: none;
+    margin-top: 10px;
+    opacity: 1;
+    transform: none;
+  }
+
+  .finalContact {
+    min-height: auto;
+    padding-top: 80px;
+    padding-bottom: 80px;
+    gap: 36px;
+  }
+
+  .finalContact h2 {
+    font-size: clamp(52px, 17vw, 70px);
+  }
+
+  .contactPanel {
+    padding: 28px 20px;
+    gap: 20px;
+  }
+
+  .projectModal {
+    width: calc(100vw - 20px);
+    height: calc(100dvh - 20px);
+    border-radius: 18px;
+  }
+
+  .projectModalHeader {
+    padding: 24px 20px 20px;
+  }
+
+  .projectModalHeader h2 {
+    font-size: 40px;
+  }
+
+  .projectModalGallery {
+    padding: 16px 12px 36px;
   }
 
   .verticalTimeline {

@@ -111,6 +111,7 @@ export default function Lanyard({
         camera={{ position, fov }}
         dpr={[1, isMobile ? 1 : 1.5]}
         frameloop={isVisible ? 'always' : 'never'}
+        style={{ touchAction: isMobile ? 'none' : 'auto' }}
         gl={{ alpha: transparent }}
         onCreated={({ gl }) => gl.setClearColor(new THREE.Color(0x000000), transparent ? 0 : 1)}
       >
@@ -276,10 +277,13 @@ function Band({
             onPointerOver={() => hover(true)}
             onPointerOut={() => hover(false)}
             onPointerUp={(e) => {
-              e.target.releasePointerCapture(e.pointerId);
+              e.stopPropagation();
+              if (e.target.hasPointerCapture?.(e.pointerId)) e.target.releasePointerCapture(e.pointerId);
               drag(false);
             }}
             onPointerDown={(e) => {
+              e.stopPropagation();
+              e.nativeEvent?.preventDefault?.();
               e.target.setPointerCapture(e.pointerId);
               drag(new THREE.Vector3().copy(e.point).sub(vec.copy(card.current.translation())));
             }}
