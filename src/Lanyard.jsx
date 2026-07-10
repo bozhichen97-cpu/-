@@ -108,7 +108,7 @@ export default function Lanyard({
   return (
     <div className="lanyard-wrapper" ref={wrapperRef}>
       <Canvas
-        camera={{ position, fov: isMobile ? Math.min(fov, 20) : fov }}
+        camera={{ position, fov: isMobile ? Math.min(fov, 22) : fov }}
         dpr={[1, isMobile ? 1.75 : 1.5]}
         frameloop={isVisible ? 'always' : 'never'}
         style={{ touchAction: isMobile ? 'pan-y' : 'auto' }}

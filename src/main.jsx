@@ -604,6 +604,11 @@ function App() {
           </aside>
         </div>
 
+        <div className="experienceBackdropTitle" aria-hidden="true">
+          <span>WORK EXPERIENCE</span>
+          <strong>工作经历</strong>
+        </div>
+
         <div className="experienceTimeline">
           <div className="timelineRail timelineRailLeft" aria-hidden="true">
             {timeline.map(({ date }) => <span key={`left-${date}`}>{date}</span>)}
