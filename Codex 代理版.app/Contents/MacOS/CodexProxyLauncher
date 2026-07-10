@@ -1,0 +1,43 @@
+#!/bin/sh
+set -eu
+
+# Built-in proxy configuration for this wrapper app only.
+# Change these four values if your local proxy uses a different address.
+HTTP_PROXY_VALUE="http://127.0.0.1:7890"
+HTTPS_PROXY_VALUE="http://127.0.0.1:7890"
+ALL_PROXY_VALUE="socks5://127.0.0.1:7890"
+NO_PROXY_VALUE="localhost,127.0.0.1,::1,.local"
+
+export HTTP_PROXY="$HTTP_PROXY_VALUE"
+export HTTPS_PROXY="$HTTPS_PROXY_VALUE"
+export ALL_PROXY="$ALL_PROXY_VALUE"
+export NO_PROXY="$NO_PROXY_VALUE"
+export http_proxy="$HTTP_PROXY_VALUE"
+export https_proxy="$HTTPS_PROXY_VALUE"
+export all_proxy="$ALL_PROXY_VALUE"
+export no_proxy="$NO_PROXY_VALUE"
+
+find_codex() {
+  for candidate in \
+    "/Applications/Codex.app/Contents/MacOS/Codex" \
+    "$HOME/Applications/Codex.app/Contents/MacOS/Codex" \
+    "/Applications/ChatGPT.app/Contents/MacOS/ChatGPT" \
+    "$HOME/Applications/ChatGPT.app/Contents/MacOS/ChatGPT"
+  do
+    if [ -x "$candidate" ]; then
+      printf '%s\n' "$candidate"
+      return 0
+    fi
+  done
+
+  return 1
+}
+
+CODEX_EXECUTABLE="$(find_codex || true)"
+
+if [ -z "$CODEX_EXECUTABLE" ]; then
+  osascript -e 'display alert "找不到 Codex" message "请先把原版 Codex.app 放入 /Applications 或 ~/Applications，然后再打开 Codex 代理版。" as critical'
+  exit 1
+fi
+
+exec "$CODEX_EXECUTABLE" "$@"

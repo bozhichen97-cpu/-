@@ -1,0 +1,712 @@
+import React, { useEffect, useRef, useState } from 'react';
+import { createRoot } from 'react-dom/client';
+import {
+  ArrowRight,
+  ArrowUpRight,
+  Globe2,
+  Mail,
+  MapPin,
+  Phone,
+  Sparkles
+} from 'lucide-react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import badgeFront from './assets/badge-front.jpg';
+import bellonaCoverClean from './assets/bellona-cover-clean.png';
+import profileEditorial from './assets/profile-final.png';
+import BorderGlow from './BorderGlow';
+import ColorBends from './ColorBends';
+import Lanyard from './Lanyard';
+import PillNav from './PillNav';
+import ScrollStack, { ScrollStackItem } from './ScrollStack';
+import TiltedCard from './TiltedCard';
+import './styles.css';
+
+gsap.registerPlugin(ScrollTrigger);
+
+const bellonaPages = Object.entries(
+  import.meta.glob('./assets/bellona/*.jpg', { eager: true, import: 'default' })
+)
+  .sort(([a], [b]) => a.localeCompare(b))
+  .map(([, page]) => page);
+
+const navItems = ['经历', '项目', '联系'];
+const pillNavItems = navItems.map((item) => ({ label: item, href: `#${item}` }));
+
+const projects = [
+  {
+    id: '01',
+    title: 'Bellona\n品牌视觉升级',
+    type: '医美/vi/包装',
+    meta: '百洛娜品牌识别、包装系统与商业物料延展',
+    className: 'project-medical',
+    cover: bellonaCoverClean
+  },
+  {
+    id: '02',
+    title: 'AI Campaign Visuals',
+    type: 'AI海报 / 新媒体 / 营销节点',
+    meta: '小红书视觉体系与内容风格',
+    className: 'project-ai'
+  },
+  {
+    id: '03',
+    title: 'Corporate Visual Design',
+    type: '品牌宣传 / 活动物料 / UI',
+    meta: '集团内外宣与产品界面支持',
+    className: 'project-corp'
+  },
+  {
+    id: '04',
+    title: 'Beauty Packaging',
+    type: '包装系统 / 礼盒 / 陈列',
+    meta: '护肤品包装与终端展示延展',
+    className: 'project-packaging'
+  },
+  {
+    id: '05',
+    title: 'Social Media Kit',
+    type: '小红书 / 公众号 / 内容栏目',
+    meta: '社媒视觉模板与运营内容体系',
+    className: 'project-social'
+  },
+  {
+    id: '06',
+    title: 'Event Visuals',
+    type: '展会主视觉 / 物料 / 美陈',
+    meta: '活动场景视觉与线下物料落地',
+    className: 'project-event'
+  }
+];
+
+const profileCards = [
+  ['FOCUS', '品牌视觉体系', 'VI 规范、包装延展、线下物料与新媒体内容统一管理。'],
+  ['METHOD', 'AI + 视觉执行', '用 AI 提升概念发散效率，同时保留人工审美判断与落地控制。'],
+  ['STYLE', '克制 / 清晰 / 商业化', '偏好有秩序、有质感、能被真实业务持续使用的视觉表达。']
+];
+
+const timeline = [
+  {
+    date: '2025.09-至今',
+    company: '韩国（株）G-MED',
+    role: '品牌设计',
+    intro: '负责医美护肤品牌的视觉系统搭建与商业化落地，将品牌调性、产品卖点、合规表达和终端使用场景统一到可持续复用的设计语言中。',
+    points: ['主导 Bellona 百洛娜、Opacious 欧泊等品牌的 VI 延展、包装视觉、产品卖点页与终端物料输出，建立统一的画面风格和资产规范。', '覆盖展会主视觉、终端陈列、新媒体内容、宣传手册、海报、销售辅助物料与产品教育内容，形成从品牌认知到销售转化的完整视觉链路。', '结合医美护肤行业合规要求、成分表达和审美趋势，平衡专业感、信任感与高级感，提升品牌在不同渠道中的识别度。', '持续整理视觉模板、包装规范和常用素材，降低重复沟通成本，让后续物料可以快速延展并保持统一。']
+  },
+  {
+    date: '2024.05-2025.06',
+    company: '青岛漫斯特科技有限公司',
+    role: '视觉设计师',
+    intro: '面向集团及多业务线提供视觉支持，在品牌宣传、产品界面、新媒体传播与 AI 创意探索之间建立统一输出标准。',
+    points: ['负责集团内外宣视觉、活动主视觉、运营海报、LOGO 与 VI 基础规范设计，保证不同业务线对外表达的一致性。', '参与 APP / 小程序 UI 页面、功能图标、营销页面与产品信息视觉梳理，让复杂功能以更清晰的视觉层级呈现。', '将 AI 工具引入海报创意、KV 草图、概念发散和风格预演流程，提高前期提案效率，并减少方向试错成本。', '配合运营、产品和业务团队完成高频物料交付，沉淀可复用版式与图片风格，提升日常设计响应速度。']
+  },
+  {
+    date: '2022.02-2024.05',
+    company: '青岛杠上开花科技有限公司',
+    role: '视觉设计师',
+    intro: '长期承担企业品牌传播与日常视觉资产建设，兼顾商务场景、内部文化、节日营销和文创产品的完整视觉交付。',
+    points: ['完成企业宣传物料、商务 PR 图、品牌手册、公众号视觉、节日海报与招聘宣传等高频设计需求。', '参与 VI 系统维护、礼盒包装、文创产品、活动物料与人事文化内容设计，让品牌在内外部场景中保持统一气质。', '在多部门协作中沉淀可复用模板和版式规范，减少临时需求带来的风格波动，提升团队整体交付效率。', '根据不同传播渠道调整视觉密度和信息层级，让商务、社媒、内部文化三类内容拥有各自合适的表达方式。']
+  },
+  {
+    date: '2020.07-2021.06',
+    company: '新百丽鞋业（深圳）有限公司',
+    role: '鞋设计师',
+    intro: '从产品设计与材料研究切入商业设计，积累了趋势判断、品类调研、结构审美与产品落地意识。',
+    points: ['负责时尚品牌新品资讯收集、趋势分析、鞋款造型草图与研发方向整理，观察流行趋势如何转化为具体产品语言。', '跟进鞋品材料、色彩、工艺、版型与市场反馈，为新品开发提供视觉与产品参考。', '在产品开发流程中理解成本、材料、结构、用户偏好和渠道陈列之间的关系，形成更务实的设计判断。', '这段经历让后续品牌和平面工作更关注真实生产、真实销售与真实使用场景，而不是单纯追求画面效果。']
+  }
+];
+
+function App() {
+  const [isNavFloating, setIsNavFloating] = useState(false);
+  const [activeProject, setActiveProject] = useState(null);
+  const [modalOrigin, setModalOrigin] = useState(null);
+  const siteCursorRef = useRef(null);
+
+  useEffect(() => {
+    const cursor = siteCursorRef.current;
+    if (!cursor || window.matchMedia('(pointer: coarse)').matches) return undefined;
+
+    let frame;
+    let targetX = window.innerWidth / 2;
+    let targetY = window.innerHeight / 2;
+    let currentX = targetX;
+    let currentY = targetY;
+
+    const renderCursor = () => {
+      currentX += (targetX - currentX) * 0.2;
+      currentY += (targetY - currentY) * 0.2;
+      cursor.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) translate(-50%, -50%)`;
+      frame = requestAnimationFrame(renderCursor);
+    };
+    const handleMove = (event) => {
+      targetX = event.clientX;
+      targetY = event.clientY;
+      cursor.classList.toggle('isActive', Boolean(event.target.closest('a, button')));
+    };
+    const showCursor = () => cursor.classList.add('isVisible');
+    const hideCursor = () => {
+      cursor.classList.remove('isVisible', 'isActive');
+    };
+
+    document.addEventListener('pointerenter', showCursor);
+    document.addEventListener('pointermove', handleMove);
+    document.documentElement.addEventListener('pointerleave', hideCursor);
+    frame = requestAnimationFrame(renderCursor);
+
+    return () => {
+      cancelAnimationFrame(frame);
+      document.removeEventListener('pointerenter', showCursor);
+      document.removeEventListener('pointermove', handleMove);
+      document.documentElement.removeEventListener('pointerleave', hideCursor);
+    };
+  }, []);
+
+  const openProject = (project, event) => {
+    if (project.id !== '01') return;
+    const rect = event.currentTarget.getBoundingClientRect();
+    setModalOrigin({
+      left: rect.left,
+      top: rect.top,
+      width: rect.width,
+      height: rect.height
+    });
+    setActiveProject(project);
+  };
+
+  const closeProject = () => {
+    setActiveProject(null);
+  };
+
+  useEffect(() => {
+    const updateNav = () => {
+      setIsNavFloating(window.scrollY >= window.innerHeight - 100);
+    };
+
+    updateNav();
+    window.addEventListener('scroll', updateNav, { passive: true });
+    window.addEventListener('resize', updateNav);
+    return () => {
+      window.removeEventListener('scroll', updateNav);
+      window.removeEventListener('resize', updateNav);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!activeProject) return undefined;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [activeProject]);
+
+  useEffect(() => {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduceMotion) return undefined;
+    let openingFallback;
+
+    const ctx = gsap.context(() => {
+      const finishOpening = () => {
+        gsap.set('.openingCurtain', { autoAlpha: 0, clipPath: 'inset(0 0 100% 0)' });
+        gsap.set('.heroBackdropTitle', { y: 0, scaleX: 1, clipPath: 'inset(0 0 0% 0)' });
+        gsap.set('.nav, .heroTopline span, .heroIntroBlock > *, .heroLanyard, .heroMetrics div, .heroActionsNew', {
+          x: 0,
+          y: 0,
+          xPercent: 0,
+          scale: 1,
+          autoAlpha: 1,
+          clipPath: 'inset(0 0 0% 0)'
+        });
+        gsap.set('.heroLanyard', { xPercent: -50 });
+      };
+
+      openingFallback = window.setTimeout(finishOpening, 3500);
+      gsap.set('.openingCurtain', { autoAlpha: 1 });
+      gsap.set('.heroBackdropTitle', {
+        transformOrigin: 'left center',
+        clipPath: 'inset(0 100% 0 0)',
+        scaleX: 0.62,
+        y: 120
+      });
+      gsap.set('.heroIntroBlock > *', { y: 44, autoAlpha: 0, clipPath: 'inset(0 0 100% 0)' });
+      gsap.set('.heroLanyard', { xPercent: -50, y: -520, autoAlpha: 0, scale: 0.98, rotate: -2 });
+      gsap.set('.heroMetrics div', { x: 70, autoAlpha: 0 });
+      gsap.set('.heroTopline span, .nav', { y: -24, autoAlpha: 0 });
+      gsap.set('.heroActionsNew', { y: 28, autoAlpha: 0 });
+
+      gsap.timeline({
+        defaults: { ease: 'power4.out' },
+        onComplete: () => {
+          window.clearTimeout(openingFallback);
+          gsap.set('.openingCurtain', { autoAlpha: 0 });
+        }
+      })
+        .to('.openingCurtain', {
+          clipPath: 'inset(0 0 100% 0)',
+          duration: 1.2,
+          ease: 'expo.inOut',
+          delay: 0.1
+        })
+        .to('.heroBackdropTitle', {
+          clipPath: 'inset(0 0% 0 0)',
+          scaleX: 1,
+          y: 0,
+          duration: 1.35,
+          ease: 'expo.out'
+        }, '-=0.52')
+        .to('.nav, .heroTopline span', {
+          y: 0,
+          autoAlpha: 1,
+          duration: 0.9,
+          stagger: 0.08
+        }, '-=1.1')
+        .to('.heroIntroBlock > *', {
+          y: 0,
+          autoAlpha: 1,
+          clipPath: 'inset(0 0 0% 0)',
+          duration: 1.05,
+          stagger: 0.08
+        }, '-=0.74')
+        .to('.heroLanyard', {
+          xPercent: -50,
+          y: 0,
+          autoAlpha: 1,
+          rotate: 0,
+          scale: 1,
+          duration: 1.55,
+          ease: 'expo.out'
+        }, '-=1')
+        .to('.heroMetrics div', {
+          x: 0,
+          autoAlpha: 1,
+          duration: 0.9,
+          stagger: 0.11
+        }, '-=0.9')
+        .to('.heroActionsNew', {
+          y: 0,
+          autoAlpha: 1,
+          duration: 0.85
+        }, '-=0.5');
+
+      gsap.to('.heroBackdropTitle', {
+        yPercent: -8,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '.hero',
+          start: 'top top',
+          end: 'bottom top',
+          scrub: 1.1
+        }
+      });
+
+      const animatedSections = [...gsap.utils.toArray('.section'), document.querySelector('.finalContact')].filter(Boolean);
+      animatedSections.forEach((section) => {
+        const title = section.querySelector('.sectionHead h2, .statement h2, .about h2, .finalContact h2');
+        const label = section.querySelector('.sectionLabel');
+        const cards = section.querySelectorAll('.projectGlowCard, .profileStaticCard, .timelineStackCard, .strengthGlowCard');
+        const images = section.querySelectorAll('.portraitCard, .projectImage');
+
+        if (label) {
+          gsap.fromTo(label, { y: 44, autoAlpha: 0 }, {
+            y: 0,
+            autoAlpha: 1,
+            duration: 0.9,
+            ease: 'power3.out',
+            scrollTrigger: { trigger: section, start: 'top 78%', once: true }
+          });
+        }
+
+        if (title) {
+          gsap.fromTo(title, {
+            y: 120,
+            scaleX: 0.78,
+            autoAlpha: 0,
+            clipPath: 'inset(0 0 100% 0)',
+            transformOrigin: 'left center'
+          }, {
+            y: 0,
+            scaleX: 1,
+            autoAlpha: 1,
+            clipPath: 'inset(0 0 0% 0)',
+            duration: 1.18,
+            ease: 'expo.out',
+            scrollTrigger: { trigger: section, start: 'top 74%', once: true }
+          });
+        }
+
+        if (cards.length) {
+          gsap.fromTo(cards, {
+            y: 90,
+            autoAlpha: 0,
+            clipPath: 'inset(16% 0 0 0)'
+          }, {
+            y: 0,
+            autoAlpha: 1,
+            clipPath: 'inset(0% 0 0 0)',
+            duration: 1,
+            ease: 'power3.out',
+            stagger: 0.09,
+            scrollTrigger: { trigger: section, start: 'top 68%', once: true }
+          });
+        }
+
+        images.forEach((image) => {
+          gsap.fromTo(image, {
+            clipPath: 'inset(0 0 100% 0)',
+            y: 70
+          }, {
+            clipPath: 'inset(0 0 0% 0)',
+            y: 0,
+            duration: 1.08,
+            ease: 'expo.out',
+            scrollTrigger: { trigger: image, start: 'top 80%', once: true }
+          });
+        });
+      });
+
+      gsap.to('.portraitCard img', {
+        yPercent: -8,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '.about',
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: 1.2
+        }
+      });
+
+      gsap.to('.timelineRail', {
+        yPercent: -5,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '.experienceTimeline',
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: 1.3
+        }
+      });
+    });
+
+    return () => {
+      window.clearTimeout(openingFallback);
+      ctx.revert();
+    };
+  }, []);
+
+  return (
+    <main>
+      <div className="siteCursor" ref={siteCursorRef} aria-hidden="true" />
+      <div className="openingCurtain" aria-hidden="true" />
+      <section className="hero" id="top">
+        <ColorBends
+          className="heroColorBends"
+          colors={['#a91d22']}
+          rotation={90}
+          autoRotate={4}
+          speed={0.72}
+          scale={1}
+          frequency={1}
+          warpStrength={1}
+          mouseInfluence={1.45}
+          noise={0.12}
+          parallax={0.5}
+          iterations={2}
+          intensity={1}
+          bandWidth={6.5}
+          transparent
+        />
+        <nav className={`nav ${isNavFloating ? 'isFloating' : ''}`}>
+          <PillNav
+            items={pillNavItems}
+            activeHref="#top"
+            baseColor="#f3f1eb"
+            pillColor="rgba(8, 8, 8, 0.72)"
+            hoveredPillTextColor="#080808"
+            pillTextColor="#f3f1eb"
+            ease="power3.out"
+          />
+          <a className="outlineButton" href="mailto:374428307@qq.com">
+            联系我 <ArrowUpRight size={16} />
+          </a>
+        </nav>
+
+        <div className="heroStage">
+          <div className="heroTopline">
+            <span><strong>VISUAL DESIGNER</strong><br />AI DESIGNER / BRAND CREATOR</span>
+            <span>AVAILABLE FOR FREELANCE <Sparkles size={15} /></span>
+          </div>
+
+          <div className="heroBackdropTitle" aria-hidden="true">PORTFOLIO</div>
+
+          <div className="heroIntroBlock">
+            <p className="scriptText">Hello, I'm</p>
+            <h1>CHEN<br />BOZHI</h1>
+            <h2>视觉设计师 &<br />AI / 品牌设计师</h2>
+            <p>
+              我专注品牌视觉体系、包装设计、新媒体视觉与AI辅助创意，把克制的审美转化为可落地的商业表达。
+            </p>
+            <div className="heroAvailability">
+              <Globe2 size={16} />
+              <span>AVAILABLE WORLDWIDE</span>
+            </div>
+          </div>
+
+          <div className="heroLanyard" aria-label="陈博智设计师挂绳身份牌">
+            <Lanyard position={[0, 0, 10]} fov={34} frontImage={badgeFront} imageFit="cover" />
+          </div>
+
+          <div className="heroMetrics">
+            <div>
+              <strong>6+</strong>
+              <span>YEARS<br />EXPERIENCE</span>
+            </div>
+            <div>
+              <strong>95%</strong>
+              <span>PRODUCT<br />FEEDBACK</span>
+            </div>
+            <div>
+              <strong>AI+</strong>
+              <span>DESIGN<br />WORKFLOW</span>
+            </div>
+          </div>
+
+          <div className="heroActions heroActionsNew">
+            <a className="solidButton" href="#项目">查看项目 <ArrowRight size={17} /></a>
+            <a className="textButton" href="mailto:374428307@qq.com">374428307@qq.com</a>
+          </div>
+        </div>
+      </section>
+
+      <section className="about section" id="经历">
+        <div className="sectionLabel">PROFILE</div>
+        <div className="aboutGrid">
+          <TiltedCard
+            containerHeight="460px"
+            containerWidth="100%"
+            rotateAmplitude={14}
+            scaleOnHover={1.08}
+          >
+            <div className="portraitCard">
+              <img src={profileEditorial} alt="陈博智个人视觉大片照片" />
+              <div className="portraitTiltLabel" aria-hidden="true">
+                <span>VISUAL DESIGNER</span>
+                <strong>CBZ.</strong>
+              </div>
+            </div>
+          </TiltedCard>
+          <div>
+            <h2>科班出身的复合型设计师，长期关注品牌、包装与新视觉工具。</h2>
+            <p>
+              我对事物保持热情与好奇，也相信审美并非单一存在。电影、展览、音乐、live house 与摄影作品都会成为设计判断的一部分。希望在更长的设计路上，创造出更多可能性。
+            </p>
+            <div className="contactRows">
+              <span><Mail size={17} />374428307@qq.com</span>
+              <span><MapPin size={17} />青岛</span>
+              <span><Sparkles size={17} />平面设计 / 品牌设计 / AI设计</span>
+            </div>
+          </div>
+          <aside className="profileAside" aria-label="设计方向与协作信息">
+            {profileCards.map(([label, title, desc]) => (
+              <div className="profileStaticCard" key={label}>
+                <span>{label}</span>
+                <strong>{title}</strong>
+                <p>{desc}</p>
+              </div>
+            ))}
+          </aside>
+        </div>
+
+        <div className="experienceTimeline">
+          <div className="timelineRail timelineRailLeft" aria-hidden="true">
+            {timeline.map(({ date }) => <span key={`left-${date}`}>{date}</span>)}
+          </div>
+          <div className="timelineRail timelineRailRight" aria-hidden="true">
+            {timeline.map(({ date }) => <span key={`right-${date}`}>{date}</span>)}
+          </div>
+          <ScrollStack
+            className="timeline timelineStack"
+            itemDistance={110}
+            itemScale={0.04}
+            itemStackDistance={34}
+            stackPosition="20%"
+            scaleEndPosition="10%"
+            baseScale={0.82}
+            rotationAmount={0.85}
+            blurAmount={0.75}
+            useWindowScroll
+          >
+            {timeline.map(({ date, company, role, intro, points }) => (
+              <ScrollStackItem key={company} itemClassName="timelineStackCard">
+                <TiltedCard
+                  containerHeight="100%"
+                  containerWidth="100%"
+                  rotateAmplitude={4.5}
+                  scaleOnHover={1.018}
+                >
+                  <BorderGlow
+                    className="timelineGlowCard"
+                    edgeSensitivity={20}
+                    glowColor="356 82 58"
+                    backgroundColor="rgba(18, 35, 49, 0.62)"
+                    borderRadius={22}
+                    glowRadius={28}
+                    glowIntensity={1.05}
+                    coneSpread={28}
+                    fillOpacity={0.3}
+                    colors={['#e3272d', '#f3f1eb', '#2cc9ff']}
+                  >
+                    <article>
+                      <time>{date}</time>
+                      <h3>{company}</h3>
+                      <strong>{role}</strong>
+                      <p>{intro}</p>
+                      <ul>
+                        {points.map((point) => (
+                          <li key={point}>{point}</li>
+                        ))}
+                      </ul>
+                    </article>
+                  </BorderGlow>
+                </TiltedCard>
+              </ScrollStackItem>
+            ))}
+          </ScrollStack>
+        </div>
+      </section>
+
+      <section className="section projects" id="项目">
+        <div className="sectionHead">
+          <div>
+            <div className="sectionLabel">SELECTED PROJECTS</div>
+            <h2>精选项目</h2>
+          </div>
+          <a className="textButton" href="mailto:374428307@qq.com">获取完整作品集 <ArrowUpRight size={16} /></a>
+        </div>
+        <div className="projectGrid">
+          {projects.map((project) => (
+            <BorderGlow
+              className="projectGlowCard"
+              key={project.id}
+              edgeSensitivity={18}
+              glowColor="356 82 58"
+              backgroundColor="rgba(18, 35, 49, 0.58)"
+              borderRadius={22}
+              glowRadius={34}
+              glowIntensity={1.25}
+              coneSpread={30}
+              animated={project.id === '01'}
+              fillOpacity={0.38}
+              colors={['#e3272d', '#f3f1eb', '#2cc9ff']}
+            >
+              <TiltedCard scaleOnHover={1.04} rotateAmplitude={7}>
+                <article
+                  className={`projectCard ${project.className} ${project.id === '01' ? 'isClickable isCaseCover' : ''}`}
+                  onClick={(event) => openProject(project, event)}
+                  onKeyDown={(event) => {
+                    if (project.id === '01' && (event.key === 'Enter' || event.key === ' ')) {
+                      event.preventDefault();
+                      openProject(project, event);
+                    }
+                  }}
+                  role={project.id === '01' ? 'button' : undefined}
+                  tabIndex={project.id === '01' ? 0 : undefined}
+                  aria-label={project.id === '01' ? '打开 Bellona 品牌视觉升级项目' : undefined}
+                >
+                  <div className="projectImage">
+                    {project.cover && <img className="projectCoverImage" src={project.cover} alt="" aria-hidden="true" />}
+                    <span>{project.id}</span>
+                    <div className="projectTitle">
+                      {project.id === '01' ? <>Bellona<br />品牌视觉升级</> : project.title}
+                    </div>
+                  </div>
+                  <div className="projectInfo">
+                    <span>{project.type}</span>
+                    <p>{project.meta}</p>
+                    <ArrowUpRight size={20} />
+                  </div>
+                </article>
+              </TiltedCard>
+            </BorderGlow>
+          ))}
+        </div>
+      </section>
+
+      {activeProject && (
+        <div
+          className="projectModalLayer"
+          onClick={closeProject}
+          onKeyDown={(event) => {
+            if (event.key === 'Escape') closeProject();
+          }}
+          role="presentation"
+        >
+          {modalOrigin && (
+            <div
+              className="projectModalGhost"
+              aria-hidden="true"
+              style={{
+                '--origin-left': `${modalOrigin.left}px`,
+                '--origin-top': `${modalOrigin.top}px`,
+                '--origin-width': `${modalOrigin.width}px`,
+                '--origin-height': `${modalOrigin.height}px`
+              }}
+            />
+          )}
+          <div
+            className="projectModal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="bellona-modal-title"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <button className="projectModalClose" type="button" onClick={closeProject} aria-label="关闭项目">
+              ×
+            </button>
+            <header className="projectModalHeader">
+              <span>01 CASE STUDY</span>
+              <h2 id="bellona-modal-title">Bellona<br />品牌视觉升级</h2>
+              <p>医美/vi/包装</p>
+            </header>
+            <div className="projectModalScroll">
+              <div className="projectModalImages">
+                {bellonaPages.map((page, index) => (
+                  <figure className="projectModalImage" key={page}>
+                    <img src={page} alt={`Bellona品牌视觉升级作品页 ${index + 1}`} loading={index < 2 ? 'eager' : 'lazy'} />
+                  </figure>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <section className="finalContact" id="联系">
+        <div>
+          <p className="eyebrow">LET'S CREATE SOMETHING BOLD.</p>
+          <h2>让品牌视觉更清晰，也更有力量。</h2>
+        </div>
+        <BorderGlow
+          className="contactGlowCard"
+          edgeSensitivity={18}
+          glowColor="356 82 58"
+          backgroundColor="rgba(18, 35, 49, 0.62)"
+          borderRadius={22}
+          glowRadius={34}
+          glowIntensity={1.2}
+          coneSpread={30}
+          fillOpacity={0.38}
+          colors={['#e3272d', '#f3f1eb', '#2cc9ff']}
+        >
+          <div className="contactPanel">
+            <a href="mailto:374428307@qq.com"><Mail size={20} />374428307@qq.com</a>
+            <a href="tel:374428307"><Phone size={20} />联系 / 作品集沟通</a>
+            <span><MapPin size={20} />青岛 · 可远程协作</span>
+            <a className="solidButton" href="mailto:374428307@qq.com">开始沟通 <ArrowUpRight size={17} /></a>
+          </div>
+        </BorderGlow>
+      </section>
+    </main>
+  );
+}
+
+createRoot(document.getElementById('root')).render(<App />);
