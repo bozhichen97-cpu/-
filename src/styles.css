@@ -1875,10 +1875,10 @@ main {
 
   .heroLanyard {
     left: 50%;
-    top: 90px;
-    width: 150vw;
+    top: -72px;
+    width: 165vw;
     max-width: none;
-    height: 520px;
+    height: 620px;
     opacity: 1;
     touch-action: pan-y;
   }
@@ -1944,7 +1944,33 @@ main {
   }
 
   .profileAside {
-    height: 350px;
+    height: auto;
+    grid-template-rows: none;
+    grid-auto-rows: minmax(168px, auto);
+    gap: 18px;
+    overflow: visible;
+    border-radius: 0;
+  }
+
+  .profileStaticCard {
+    min-height: 168px;
+    justify-content: flex-start;
+    padding: 22px 20px;
+    border-radius: 18px;
+  }
+
+  .profileStaticCard span {
+    margin-bottom: 12px;
+  }
+
+  .profileStaticCard strong {
+    font-size: 19px;
+  }
+
+  .profileStaticCard p {
+    margin-top: 12px;
+    font-size: 13px;
+    line-height: 1.7;
   }
 
   .timelineStack {
