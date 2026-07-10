@@ -84,6 +84,8 @@ export default function Lanyard({
   lanyardWidth = 1
 }) {
   const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' && window.innerWidth < 768);
+  const [isVisible, setIsVisible] = useState(true);
+  const wrapperRef = useRef(null);
   const defaultFrontImage = useMemo(() => frontImage || makeDefaultFrontImage(), [frontImage]);
   const defaultBackImage = useMemo(() => backImage || makeDefaultBackImage(), [backImage]);
 
@@ -93,11 +95,22 @@ export default function Lanyard({
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  useEffect(() => {
+    const wrapper = wrapperRef.current;
+    if (!wrapper || !('IntersectionObserver' in window)) return undefined;
+    const observer = new IntersectionObserver(([entry]) => setIsVisible(entry.isIntersecting), {
+      rootMargin: '120px 0px'
+    });
+    observer.observe(wrapper);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <div className="lanyard-wrapper">
+    <div className="lanyard-wrapper" ref={wrapperRef}>
       <Canvas
         camera={{ position, fov }}
-        dpr={[1, isMobile ? 1.5 : 2]}
+        dpr={[1, isMobile ? 1 : 1.5]}
+        frameloop={isVisible ? 'always' : 'never'}
         gl={{ alpha: transparent }}
         onCreated={({ gl }) => gl.setClearColor(new THREE.Color(0x000000), transparent ? 0 : 1)}
       >
@@ -222,7 +235,7 @@ function Band({
       [card, j1, j2, j3, fixed].forEach((ref) => ref.current?.wakeUp());
       card.current?.setNextKinematicTranslation({ x: vec.x - dragged.x, y: vec.y - dragged.y, z: vec.z - dragged.z });
     }
-    if (fixed.current) {
+    if (fixed.current && j1.current && j2.current && j3.current && card.current && band.current) {
       [j1, j2].forEach((ref) => {
         if (!ref.current.lerped) ref.current.lerped = new THREE.Vector3().copy(ref.current.translation());
         const clampedDistance = Math.max(0.1, Math.min(1, ref.current.lerped.distanceTo(ref.current.translation())));

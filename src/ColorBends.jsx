@@ -172,7 +172,8 @@ export default function ColorBends({
     const renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: 'high-performance', alpha: true });
     rendererRef.current = renderer;
     renderer.outputColorSpace = THREE.SRGBColorSpace;
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    const isCompact = window.matchMedia('(max-width: 760px)').matches;
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, isCompact ? 1 : 1.35));
     renderer.setClearColor(0x000000, transparent ? 0 : 1);
     renderer.domElement.style.width = '100%';
     renderer.domElement.style.height = '100%';
@@ -196,7 +197,10 @@ export default function ColorBends({
       window.addEventListener('resize', handleResize);
     }
 
+    let isVisible = true;
     const loop = () => {
+      rafRef.current = null;
+      if (!isVisible || document.hidden) return;
       const dt = clock.getDelta();
       const elapsed = clock.elapsedTime;
       material.uniforms.uTime.value = elapsed;
@@ -207,10 +211,34 @@ export default function ColorBends({
       renderer.render(scene, camera);
       rafRef.current = requestAnimationFrame(loop);
     };
-    rafRef.current = requestAnimationFrame(loop);
+
+    const startLoop = () => {
+      if (rafRef.current === null && isVisible && !document.hidden) {
+        clock.getDelta();
+        rafRef.current = requestAnimationFrame(loop);
+      }
+    };
+    const stopLoop = () => {
+      if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+    };
+    const visibilityObserver = new IntersectionObserver(([entry]) => {
+      isVisible = entry.isIntersecting;
+      if (isVisible) startLoop();
+      else stopLoop();
+    }, { rootMargin: '120px 0px' });
+    const handleVisibilityChange = () => {
+      if (document.hidden) stopLoop();
+      else startLoop();
+    };
+    visibilityObserver.observe(container);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    startLoop();
 
     return () => {
-      if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
+      stopLoop();
+      visibilityObserver.disconnect();
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
       if (resizeObserverRef.current) resizeObserverRef.current.disconnect();
       else window.removeEventListener('resize', handleResize);
       geometry.dispose();
@@ -272,4 +300,3 @@ export default function ColorBends({
 
   return <div ref={containerRef} className={`color-bends-container ${className}`} style={style} aria-hidden="true" />;
 }
-

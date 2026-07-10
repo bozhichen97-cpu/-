@@ -146,11 +146,19 @@ const ScrollStack = ({
 
   const setupLenis = useCallback(() => {
     if (useWindowScroll) {
-      window.addEventListener('scroll', updateCardTransforms, { passive: true });
-      window.addEventListener('resize', updateCardTransforms);
+      const scheduleUpdate = () => {
+        if (animationFrameRef.current === null) {
+          animationFrameRef.current = requestAnimationFrame(() => {
+            animationFrameRef.current = null;
+            updateCardTransforms();
+          });
+        }
+      };
+      window.addEventListener('scroll', scheduleUpdate, { passive: true });
+      window.addEventListener('resize', scheduleUpdate);
       return () => {
-        window.removeEventListener('scroll', updateCardTransforms);
-        window.removeEventListener('resize', updateCardTransforms);
+        window.removeEventListener('scroll', scheduleUpdate);
+        window.removeEventListener('resize', scheduleUpdate);
       };
     }
 

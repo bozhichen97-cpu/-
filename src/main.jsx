@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import {
   ArrowRight,
@@ -11,16 +11,17 @@ import {
 } from 'lucide-react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import badgeFront from './assets/badge-front.jpg';
-import bellonaCoverClean from './assets/bellona-cover-clean.png';
-import profileEditorial from './assets/profile-final.png';
+import badgeFront from './assets/badge-front.webp';
+import bellonaCoverClean from './assets/bellona-cover-clean.webp';
+import profileEditorial from './assets/profile-final.webp';
 import BorderGlow from './BorderGlow';
-import ColorBends from './ColorBends';
-import Lanyard from './Lanyard';
 import PillNav from './PillNav';
 import ScrollStack, { ScrollStackItem } from './ScrollStack';
 import TiltedCard from './TiltedCard';
 import './styles.css';
+
+const ColorBends = lazy(() => import('./ColorBends'));
+const Lanyard = lazy(() => import('./Lanyard'));
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -120,13 +121,40 @@ function App() {
   const [isNavFloating, setIsNavFloating] = useState(false);
   const [activeProject, setActiveProject] = useState(null);
   const [modalOrigin, setModalOrigin] = useState(null);
+  const [heroEffectsReady, setHeroEffectsReady] = useState(false);
+  const [lanyardReady, setLanyardReady] = useState(false);
   const siteCursorRef = useRef(null);
+
+  useEffect(() => {
+    const revealEffects = () => setHeroEffectsReady(true);
+    let lanyardIdleId;
+    const lanyardDelayId = window.setTimeout(() => {
+      if ('requestIdleCallback' in window) {
+        lanyardIdleId = window.requestIdleCallback(() => setLanyardReady(true), { timeout: 1400 });
+      } else {
+        setLanyardReady(true);
+      }
+    }, 900);
+    if ('requestIdleCallback' in window) {
+      const idleId = window.requestIdleCallback(revealEffects, { timeout: 700 });
+      return () => {
+        window.cancelIdleCallback(idleId);
+        window.clearTimeout(lanyardDelayId);
+        if (lanyardIdleId) window.cancelIdleCallback(lanyardIdleId);
+      };
+    }
+    const timeoutId = window.setTimeout(revealEffects, 120);
+    return () => {
+      window.clearTimeout(timeoutId);
+      window.clearTimeout(lanyardDelayId);
+    };
+  }, []);
 
   useEffect(() => {
     const cursor = siteCursorRef.current;
     if (!cursor || window.matchMedia('(pointer: coarse)').matches) return undefined;
 
-    let frame;
+    let frame = null;
     let targetX = window.innerWidth / 2;
     let targetY = window.innerHeight / 2;
     let currentX = targetX;
@@ -136,12 +164,17 @@ function App() {
       currentX += (targetX - currentX) * 0.2;
       currentY += (targetY - currentY) * 0.2;
       cursor.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) translate(-50%, -50%)`;
-      frame = requestAnimationFrame(renderCursor);
+      if (Math.abs(targetX - currentX) > 0.1 || Math.abs(targetY - currentY) > 0.1) {
+        frame = requestAnimationFrame(renderCursor);
+      } else {
+        frame = null;
+      }
     };
     const handleMove = (event) => {
       targetX = event.clientX;
       targetY = event.clientY;
       cursor.classList.toggle('isActive', Boolean(event.target.closest('a, button')));
+      if (frame === null) frame = requestAnimationFrame(renderCursor);
     };
     const showCursor = () => cursor.classList.add('isVisible');
     const hideCursor = () => {
@@ -151,10 +184,9 @@ function App() {
     document.addEventListener('pointerenter', showCursor);
     document.addEventListener('pointermove', handleMove);
     document.documentElement.addEventListener('pointerleave', hideCursor);
-    frame = requestAnimationFrame(renderCursor);
 
     return () => {
-      cancelAnimationFrame(frame);
+      if (frame !== null) cancelAnimationFrame(frame);
       document.removeEventListener('pointerenter', showCursor);
       document.removeEventListener('pointermove', handleMove);
       document.documentElement.removeEventListener('pointerleave', hideCursor);
@@ -178,16 +210,23 @@ function App() {
   };
 
   useEffect(() => {
+    let navFrame = null;
     const updateNav = () => {
+      navFrame = null;
       setIsNavFloating(window.scrollY >= window.innerHeight - 100);
     };
 
+    const scheduleNavUpdate = () => {
+      if (navFrame === null) navFrame = requestAnimationFrame(updateNav);
+    };
+
     updateNav();
-    window.addEventListener('scroll', updateNav, { passive: true });
-    window.addEventListener('resize', updateNav);
+    window.addEventListener('scroll', scheduleNavUpdate, { passive: true });
+    window.addEventListener('resize', scheduleNavUpdate);
     return () => {
-      window.removeEventListener('scroll', updateNav);
-      window.removeEventListener('resize', updateNav);
+      if (navFrame !== null) cancelAnimationFrame(navFrame);
+      window.removeEventListener('scroll', scheduleNavUpdate);
+      window.removeEventListener('resize', scheduleNavUpdate);
     };
   }, []);
 
@@ -398,23 +437,27 @@ function App() {
       <div className="siteCursor" ref={siteCursorRef} aria-hidden="true" />
       <div className="openingCurtain" aria-hidden="true" />
       <section className="hero" id="top">
-        <ColorBends
-          className="heroColorBends"
-          colors={['#a91d22']}
-          rotation={90}
-          autoRotate={4}
-          speed={0.72}
-          scale={1}
-          frequency={1}
-          warpStrength={1}
-          mouseInfluence={1.45}
-          noise={0.12}
-          parallax={0.5}
-          iterations={2}
-          intensity={1}
-          bandWidth={6.5}
-          transparent
-        />
+        {heroEffectsReady && (
+          <Suspense fallback={null}>
+            <ColorBends
+              className="heroColorBends"
+              colors={['#a91d22']}
+              rotation={90}
+              autoRotate={4}
+              speed={0.72}
+              scale={1}
+              frequency={1}
+              warpStrength={1}
+              mouseInfluence={1.45}
+              noise={0.12}
+              parallax={0.5}
+              iterations={2}
+              intensity={1}
+              bandWidth={6.5}
+              transparent
+            />
+          </Suspense>
+        )}
         <nav className={`nav ${isNavFloating ? 'isFloating' : ''}`}>
           <PillNav
             items={pillNavItems}
@@ -452,7 +495,11 @@ function App() {
           </div>
 
           <div className="heroLanyard" aria-label="陈博智设计师挂绳身份牌">
-            <Lanyard position={[0, 0, 10]} fov={34} frontImage={badgeFront} imageFit="cover" />
+            {lanyardReady && (
+              <Suspense fallback={null}>
+                <Lanyard position={[0, 0, 10]} fov={34} frontImage={badgeFront} imageFit="cover" />
+              </Suspense>
+            )}
           </div>
 
           <div className="heroMetrics">
@@ -487,7 +534,7 @@ function App() {
             scaleOnHover={1.08}
           >
             <div className="portraitCard">
-              <img src={profileEditorial} alt="陈博智个人视觉大片照片" />
+              <img src={profileEditorial} alt="陈博智个人视觉大片照片" loading="lazy" decoding="async" />
               <div className="portraitTiltLabel" aria-hidden="true">
                 <span>VISUAL DESIGNER</span>
                 <strong>CBZ.</strong>
@@ -613,7 +660,9 @@ function App() {
                   aria-label={project.id === '01' ? '打开 Bellona 品牌视觉升级项目' : undefined}
                 >
                   <div className="projectImage">
-                    {project.cover && <img className="projectCoverImage" src={project.cover} alt="" aria-hidden="true" />}
+                    {project.cover && (
+                      <img className="projectCoverImage" src={project.cover} alt="" aria-hidden="true" loading="lazy" decoding="async" />
+                    )}
                     <span>{project.id}</span>
                     <div className="projectTitle">
                       {project.id === '01' ? <>Bellona<br />品牌视觉升级</> : project.title}
@@ -671,7 +720,12 @@ function App() {
               <div className="projectModalImages">
                 {bellonaPages.map((page, index) => (
                   <figure className="projectModalImage" key={page}>
-                    <img src={page} alt={`Bellona品牌视觉升级作品页 ${index + 1}`} loading={index < 2 ? 'eager' : 'lazy'} />
+                    <img
+                      src={page}
+                      alt={`Bellona品牌视觉升级作品页 ${index + 1}`}
+                      loading={index < 2 ? 'eager' : 'lazy'}
+                      decoding="async"
+                    />
                   </figure>
                 ))}
               </div>
