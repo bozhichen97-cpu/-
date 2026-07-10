@@ -13,6 +13,7 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import badgeFront from './assets/badge-front.webp';
 import bellonaCoverClean from './assets/bellona-cover-clean.webp';
+import cardModel from './assets/lanyard/card.glb';
 import profileEditorial from './assets/profile-final.webp';
 import BorderGlow from './BorderGlow';
 import PillNav from './PillNav';
@@ -121,32 +122,61 @@ function App() {
   const [isNavFloating, setIsNavFloating] = useState(false);
   const [activeProject, setActiveProject] = useState(null);
   const [modalOrigin, setModalOrigin] = useState(null);
+  const [loadProgress, setLoadProgress] = useState(1);
+  const [isLoading, setIsLoading] = useState(true);
   const [heroEffectsReady, setHeroEffectsReady] = useState(false);
   const [lanyardReady, setLanyardReady] = useState(false);
   const siteCursorRef = useRef(null);
 
   useEffect(() => {
-    const revealEffects = () => setHeroEffectsReady(true);
-    let lanyardIdleId;
-    const lanyardDelayId = window.setTimeout(() => {
-      if ('requestIdleCallback' in window) {
-        lanyardIdleId = window.requestIdleCallback(() => setLanyardReady(true), { timeout: 1400 });
-      } else {
-        setLanyardReady(true);
-      }
-    }, 900);
-    if ('requestIdleCallback' in window) {
-      const idleId = window.requestIdleCallback(revealEffects, { timeout: 700 });
-      return () => {
-        window.cancelIdleCallback(idleId);
-        window.clearTimeout(lanyardDelayId);
-        if (lanyardIdleId) window.cancelIdleCallback(lanyardIdleId);
+    let cancelled = false;
+    let completedWeight = 1;
+    const startedAt = Date.now();
+    const updateProgress = (weight) => {
+      completedWeight += weight;
+      if (!cancelled) setLoadProgress(Math.min(99, completedWeight));
+    };
+    const preloadImage = (src, weight) => new Promise((resolve) => {
+      const image = new Image();
+      const finish = () => {
+        updateProgress(weight);
+        resolve();
       };
-    }
-    const timeoutId = window.setTimeout(revealEffects, 120);
+      image.onload = () => {
+        if (image.decode) image.decode().catch(() => {}).finally(finish);
+        else finish();
+      };
+      image.onerror = finish;
+      image.src = src;
+    });
+    const preloadModule = (loader, weight) => loader()
+      .catch(() => null)
+      .then(() => updateProgress(weight));
+    const preloadModel = fetch(cardModel, { cache: 'force-cache' })
+      .then((response) => response.ok ? response.arrayBuffer() : null)
+      .catch(() => null)
+      .then(() => updateProgress(28));
+
+    Promise.all([
+      preloadModule(() => import('./ColorBends'), 10),
+      preloadModule(() => import('./Lanyard'), 25),
+      preloadImage(badgeFront, 12),
+      preloadImage(profileEditorial, 14),
+      preloadImage(bellonaCoverClean, 5),
+      preloadModel
+    ]).then(() => {
+      if (cancelled) return;
+      setHeroEffectsReady(true);
+      setLanyardReady(true);
+      setLoadProgress(100);
+      const minimumDelay = Math.max(0, 900 - (Date.now() - startedAt));
+      window.setTimeout(() => {
+        if (!cancelled) setIsLoading(false);
+      }, minimumDelay + 650);
+    });
+
     return () => {
-      window.clearTimeout(timeoutId);
-      window.clearTimeout(lanyardDelayId);
+      cancelled = true;
     };
   }, []);
 
@@ -434,6 +464,17 @@ function App() {
 
   return (
     <main>
+      <div className={`siteLoader ${isLoading ? 'isVisible' : 'isComplete'}`} aria-hidden={!isLoading}>
+        <div className="siteLoaderBrand">CBZ.</div>
+        <div className="siteLoaderCount">{String(loadProgress).padStart(3, '0')}</div>
+        <div className="siteLoaderTrack">
+          <span style={{ transform: `scaleX(${loadProgress / 100})` }} />
+        </div>
+        <div className="siteLoaderMeta">
+          <span>LOADING PORTFOLIO</span>
+          <span>{loadProgress}%</span>
+        </div>
+      </div>
       <div className="siteCursor" ref={siteCursorRef} aria-hidden="true" />
       <div className="openingCurtain" aria-hidden="true" />
       <section className="hero" id="top">
