@@ -2402,9 +2402,11 @@ main {
 
   .finalContact h2 {
     max-width: 100%;
-    font-size: clamp(48px, 14vw, 60px);
-    line-height: 1.12;
-    letter-spacing: 0.02em;
+    font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", Arial, sans-serif;
+    font-size: clamp(42px, 12.5vw, 54px);
+    font-weight: 800;
+    line-height: 1.18;
+    letter-spacing: 0.025em;
     word-break: normal;
     overflow-wrap: break-word;
   }

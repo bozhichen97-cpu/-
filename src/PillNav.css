@@ -166,6 +166,15 @@
   background: var(--base);
   border-radius: 1px;
   transform-origin: center;
+  transition: transform 240ms ease;
+}
+
+.mobile-menu-button.is-open .hamburger-line:first-child {
+  transform: translateY(3px) rotate(45deg);
+}
+
+.mobile-menu-button.is-open .hamburger-line:last-child {
+  transform: translateY(-3px) rotate(-45deg);
 }
 
 .mobile-menu-popover {
@@ -181,8 +190,18 @@
   opacity: 0;
   transform-origin: top center;
   visibility: hidden;
+  pointer-events: none;
+  transform: translateY(10px);
+  transition: opacity 220ms ease, transform 220ms ease, visibility 220ms ease;
   backdrop-filter: blur(18px) saturate(145%);
   -webkit-backdrop-filter: blur(18px) saturate(145%);
+}
+
+.mobile-menu-popover.is-open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0);
 }
 
 .mobile-menu-list {

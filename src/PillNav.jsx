@@ -19,8 +19,6 @@ const PillNav = ({
   const activeTweenRefs = useRef([]);
   const logoRef = useRef(null);
   const logoTweenRef = useRef(null);
-  const hamburgerRef = useRef(null);
-  const mobileMenuRef = useRef(null);
   const navItemsRef = useRef(null);
 
   useEffect(() => {
@@ -71,10 +69,6 @@ const PillNav = ({
     window.addEventListener('resize', onResize);
     document.fonts?.ready?.then(layout).catch(() => {});
 
-    if (mobileMenuRef.current) {
-      gsap.set(mobileMenuRef.current, { visibility: 'hidden', opacity: 0, scaleY: 1 });
-    }
-
     if (initialLoadAnimation) {
       if (logoRef.current) {
         gsap.set(logoRef.current, { scale: 0 });
@@ -123,38 +117,6 @@ const PillNav = ({
       overwrite: 'auto'
     });
   };
-
-  useEffect(() => {
-    const hamburger = hamburgerRef.current;
-    const menu = mobileMenuRef.current;
-
-    if (hamburger) {
-      const lines = hamburger.querySelectorAll('.hamburger-line');
-      if (isMobileMenuOpen) {
-        gsap.to(lines[0], { rotation: 45, y: 3, duration: 0.3, ease });
-        gsap.to(lines[1], { rotation: -45, y: -3, duration: 0.3, ease });
-      } else {
-        gsap.to(lines[0], { rotation: 0, y: 0, duration: 0.3, ease });
-        gsap.to(lines[1], { rotation: 0, y: 0, duration: 0.3, ease });
-      }
-    }
-
-    if (menu) {
-      gsap.killTweensOf(menu);
-      if (isMobileMenuOpen) {
-        gsap.set(menu, { visibility: 'visible' });
-        gsap.fromTo(menu, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.3, ease });
-      } else {
-        gsap.to(menu, {
-          opacity: 0,
-          y: 10,
-          duration: 0.2,
-          ease,
-          onComplete: () => gsap.set(menu, { visibility: 'hidden' })
-        });
-      }
-    }
-  }, [isMobileMenuOpen, ease]);
 
   const toggleMobileMenu = () => setIsMobileMenuOpen((open) => !open);
 
@@ -209,13 +171,13 @@ const PillNav = ({
           </ul>
         </div>
 
-        <button className="mobile-menu-button mobile-only" onClick={toggleMobileMenu} aria-label="Toggle menu" aria-expanded={isMobileMenuOpen} ref={hamburgerRef}>
+        <button className={`mobile-menu-button mobile-only${isMobileMenuOpen ? ' is-open' : ''}`} onClick={toggleMobileMenu} aria-label="Toggle menu" aria-expanded={isMobileMenuOpen}>
           <span className="hamburger-line" />
           <span className="hamburger-line" />
         </button>
       </nav>
 
-      <div className="mobile-menu-popover mobile-only" ref={mobileMenuRef} style={cssVars}>
+      <div className={`mobile-menu-popover mobile-only${isMobileMenuOpen ? ' is-open' : ''}`} style={cssVars}>
         <ul className="mobile-menu-list">
           {items.map((item, i) => (
             <li key={item.href || `mobile-item-${i}`}>
