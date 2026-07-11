@@ -789,7 +789,7 @@ function App() {
             <div className="sectionLabel">SELECTED PROJECTS</div>
             <h2>精选项目</h2>
           </div>
-          <button className="textButton contactDialogTrigger" type="button" onClick={() => setIsContactOpen(true)}>获取完整作品集 <ArrowUpRight size={16} /></button>
+          <button className="outlineButton portfolioContactButton contactDialogTrigger" type="button" onClick={() => setIsContactOpen(true)}>获取完整作品集 <ArrowUpRight size={16} /></button>
         </div>
         <div className="projectGrid">
           {projects.map((project) => (

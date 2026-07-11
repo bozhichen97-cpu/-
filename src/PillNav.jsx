@@ -124,16 +124,13 @@ const PillNav = ({
     });
   };
 
-  const toggleMobileMenu = () => {
-    const nextState = !isMobileMenuOpen;
-    setIsMobileMenuOpen(nextState);
-
+  useEffect(() => {
     const hamburger = hamburgerRef.current;
     const menu = mobileMenuRef.current;
 
     if (hamburger) {
       const lines = hamburger.querySelectorAll('.hamburger-line');
-      if (nextState) {
+      if (isMobileMenuOpen) {
         gsap.to(lines[0], { rotation: 45, y: 3, duration: 0.3, ease });
         gsap.to(lines[1], { rotation: -45, y: -3, duration: 0.3, ease });
       } else {
@@ -143,7 +140,8 @@ const PillNav = ({
     }
 
     if (menu) {
-      if (nextState) {
+      gsap.killTweensOf(menu);
+      if (isMobileMenuOpen) {
         gsap.set(menu, { visibility: 'visible' });
         gsap.fromTo(menu, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.3, ease });
       } else {
@@ -156,6 +154,16 @@ const PillNav = ({
         });
       }
     }
+  }, [isMobileMenuOpen, ease]);
+
+  const toggleMobileMenu = () => setIsMobileMenuOpen((open) => !open);
+
+  const handleMobileNavigate = (event, href) => {
+    event.preventDefault();
+    setIsMobileMenuOpen(false);
+    window.setTimeout(() => {
+      window.location.hash = href.startsWith('#') ? href.slice(1) : href;
+    }, 0);
   };
 
   const cssVars = {
@@ -201,7 +209,7 @@ const PillNav = ({
           </ul>
         </div>
 
-        <button className="mobile-menu-button mobile-only" onClick={toggleMobileMenu} aria-label="Toggle menu" ref={hamburgerRef}>
+        <button className="mobile-menu-button mobile-only" onClick={toggleMobileMenu} aria-label="Toggle menu" aria-expanded={isMobileMenuOpen} ref={hamburgerRef}>
           <span className="hamburger-line" />
           <span className="hamburger-line" />
         </button>
@@ -214,7 +222,7 @@ const PillNav = ({
               <a
                 href={item.href}
                 className={`mobile-menu-link${activeHref === item.href ? ' is-active' : ''}`}
-                onClick={() => setIsMobileMenuOpen(false)}
+                onClick={(event) => handleMobileNavigate(event, item.href)}
               >
                 {item.label}
               </a>
