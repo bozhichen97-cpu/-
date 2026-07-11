@@ -112,7 +112,7 @@ export default function Lanyard({
         camera={{ position, fov: isMobile ? Math.min(fov, 22) : fov }}
         dpr={[1, isMobile ? 1.75 : 1.5]}
         frameloop={isVisible ? 'always' : 'never'}
-        style={{ touchAction: isMobile ? 'pan-y' : 'auto' }}
+        style={{ touchAction: isMobile ? 'none' : 'auto' }}
         gl={{ alpha: transparent }}
         onCreated={({ gl }) => gl.setClearColor(new THREE.Color(0x000000), transparent ? 0 : 1)}
       >
@@ -288,6 +288,7 @@ function Band({
               if (e.target.hasPointerCapture?.(e.pointerId)) e.target.releasePointerCapture(e.pointerId);
               drag(false);
             }}
+            onPointerCancel={() => drag(false)}
             onPointerDown={(e) => {
               e.stopPropagation();
               e.nativeEvent?.preventDefault?.();

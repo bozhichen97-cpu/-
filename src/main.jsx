@@ -125,7 +125,6 @@ const timeline = [
 function App() {
   const [isNavFloating, setIsNavFloating] = useState(false);
   const [activeProject, setActiveProject] = useState(null);
-  const [modalOrigin, setModalOrigin] = useState(null);
   const [expandedExperience, setExpandedExperience] = useState(0);
   const [loadProgress, setLoadProgress] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
@@ -134,7 +133,11 @@ function App() {
   const [criticalAssetsReady, setCriticalAssetsReady] = useState(false);
   const [lanyardVisualReady, setLanyardVisualReady] = useState(false);
   const siteCursorRef = useRef(null);
-  const loaderStartedAtRef = useRef(Date.now());
+  const loaderStartedAtRef = useRef(performance.now());
+  const loadProgressRef = useRef(1);
+  const loadFinishStartedAtRef = useRef(null);
+  const loadFinishFromRef = useRef(1);
+  const loaderHiddenRef = useRef(false);
 
   useLayoutEffect(() => {
     if (!isLoading) return undefined;
@@ -192,6 +195,54 @@ function App() {
   }, [isLoading]);
 
   useEffect(() => {
+    let frame = null;
+    let hideTimer = null;
+
+    const updateDisplayedProgress = (value) => {
+      const next = Math.max(loadProgressRef.current, Math.min(100, Math.floor(value)));
+      if (next === loadProgressRef.current) return;
+      loadProgressRef.current = next;
+      setLoadProgress(next);
+    };
+
+    const animateProgress = (now) => {
+      if (loadFinishStartedAtRef.current === null) {
+        const elapsed = now - loaderStartedAtRef.current;
+        let target;
+        if (elapsed < 1300) target = 1 + (elapsed / 1300) * 78;
+        else if (elapsed < 2800) target = 79 + ((elapsed - 1300) / 1500) * 16;
+        else target = 95 + Math.min(2, (elapsed - 2800) / 1400);
+        updateDisplayedProgress(target);
+      } else {
+        const elapsed = now - loadFinishStartedAtRef.current;
+        const start = loadFinishFromRef.current;
+        if (elapsed < 480) {
+          const eased = 1 - Math.pow(1 - elapsed / 480, 3);
+          updateDisplayedProgress(start + (96 - start) * eased);
+        } else if (elapsed < 820) updateDisplayedProgress(97);
+        else if (elapsed < 1160) updateDisplayedProgress(98);
+        else if (elapsed < 1500) updateDisplayedProgress(99);
+        else {
+          updateDisplayedProgress(100);
+          if (!loaderHiddenRef.current) {
+            loaderHiddenRef.current = true;
+            hideTimer = window.setTimeout(() => setIsLoading(false), 180);
+          }
+          frame = null;
+          return;
+        }
+      }
+      frame = requestAnimationFrame(animateProgress);
+    };
+
+    frame = requestAnimationFrame(animateProgress);
+    return () => {
+      if (frame !== null) cancelAnimationFrame(frame);
+      if (hideTimer !== null) window.clearTimeout(hideTimer);
+    };
+  }, []);
+
+  useEffect(() => {
     let cancelled = false;
     const preloadImage = (src) => new Promise((resolve) => {
       const image = new Image();
@@ -211,7 +262,6 @@ function App() {
       preloadImage(profileEditorial)
     ]).then(() => {
       if (cancelled) return;
-      setLoadProgress(72);
       setHeroEffectsReady(true);
       setLanyardReady(true);
       setCriticalAssetsReady(true);
@@ -224,14 +274,11 @@ function App() {
 
   useEffect(() => {
     if (!criticalAssetsReady || !lanyardVisualReady) return undefined;
-
-    setLoadProgress(100);
-    const minimumDelay = Math.max(0, 900 - (Date.now() - loaderStartedAtRef.current));
-    const completeTimer = window.setTimeout(() => setIsLoading(false), minimumDelay + 220);
-
-    return () => {
-      window.clearTimeout(completeTimer);
-    };
+    if (loadFinishStartedAtRef.current === null) {
+      loadFinishFromRef.current = loadProgressRef.current;
+      loadFinishStartedAtRef.current = performance.now();
+    }
+    return undefined;
   }, [criticalAssetsReady, lanyardVisualReady]);
 
   useEffect(() => {
@@ -277,15 +324,18 @@ function App() {
     };
   }, []);
 
-  const openProject = (project, event) => {
+  const openProject = async (project) => {
     if (!project.pages?.length) return;
-    const rect = event.currentTarget.getBoundingClientRect();
-    setModalOrigin({
-      left: rect.left,
-      top: rect.top,
-      width: rect.width,
-      height: rect.height
-    });
+    await Promise.all(project.pages.slice(0, 2).map((src) => new Promise((resolve) => {
+      const image = new Image();
+      const finish = () => resolve();
+      image.onload = () => {
+        if (image.decode) image.decode().catch(() => {}).finally(finish);
+        else finish();
+      };
+      image.onerror = finish;
+      image.src = src;
+    })));
     setActiveProject(project);
   };
 
@@ -691,24 +741,7 @@ function App() {
               const isExpanded = expandedExperience === index;
               return (
               <div className={`timelineStackCard experienceAccordionItem ${isExpanded ? 'isExpanded' : ''}`} key={company}>
-                <TiltedCard
-                  containerHeight="auto"
-                  containerWidth="100%"
-                  rotateAmplitude={4.5}
-                  scaleOnHover={1.008}
-                >
-                  <BorderGlow
-                    className="timelineGlowCard"
-                    edgeSensitivity={20}
-                    glowColor="356 82 58"
-                    backgroundColor="rgba(18, 35, 49, 0.62)"
-                    borderRadius={22}
-                    glowRadius={28}
-                    glowIntensity={1.05}
-                    coneSpread={28}
-                    fillOpacity={0.3}
-                    colors={['#e3272d', '#f3f1eb', '#2cc9ff']}
-                  >
+                  <div className="timelineGlowCard experienceCardSurface">
                     <article>
                       <button
                         className="experienceAccordionTrigger"
@@ -739,8 +772,7 @@ function App() {
                         </div>
                       </div>
                     </article>
-                  </BorderGlow>
-                </TiltedCard>
+                  </div>
               </div>
               );
             })}
@@ -775,11 +807,11 @@ function App() {
               <TiltedCard scaleOnHover={1.04} rotateAmplitude={7}>
                 <article
                   className={`projectCard ${project.className} ${project.pages?.length ? 'isClickable isCaseCover' : ''}`}
-                  onClick={(event) => openProject(project, event)}
+                  onClick={() => openProject(project)}
                   onKeyDown={(event) => {
                     if (project.pages?.length && (event.key === 'Enter' || event.key === ' ')) {
                       event.preventDefault();
-                      openProject(project, event);
+                      openProject(project);
                     }
                   }}
                   role={project.pages?.length ? 'button' : undefined}
@@ -821,18 +853,6 @@ function App() {
           }}
           role="presentation"
         >
-          {modalOrigin && (
-            <div
-              className="projectModalGhost"
-              aria-hidden="true"
-              style={{
-                '--origin-left': `${modalOrigin.left}px`,
-                '--origin-top': `${modalOrigin.top}px`,
-                '--origin-width': `${modalOrigin.width}px`,
-                '--origin-height': `${modalOrigin.height}px`
-              }}
-            />
-          )}
           <div
             className="projectModal"
             role="dialog"
