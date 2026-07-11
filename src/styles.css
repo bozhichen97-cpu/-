@@ -2073,6 +2073,7 @@ main {
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
     transition: none;
+    z-index: 1200;
   }
 
   .nav .pill-logo {
@@ -2091,7 +2092,11 @@ main {
     width: 42px;
     height: 42px;
     transform: translateY(-50%);
-    z-index: 3;
+    z-index: 1202;
+  }
+
+  .nav .mobile-menu-popover {
+    z-index: 1201;
   }
 
   .navLinks {
