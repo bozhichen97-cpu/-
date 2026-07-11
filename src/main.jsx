@@ -379,7 +379,15 @@ function App() {
   useEffect(() => {
     if (isLoading) return undefined;
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduceMotion) return undefined;
+    if (reduceMotion) {
+      const curtain = document.querySelector('.openingCurtain');
+      if (curtain) {
+        curtain.style.opacity = '0';
+        curtain.style.visibility = 'hidden';
+        curtain.style.clipPath = 'inset(0 0 100% 0)';
+      }
+      return undefined;
+    }
     let disposed = false;
     let ctx;
     let openingFallback;
