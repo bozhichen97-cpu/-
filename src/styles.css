@@ -564,6 +564,18 @@ main {
   filter: drop-shadow(0 34px 80px rgba(0,0,0,0.45));
 }
 
+.heroLanyardFallback {
+  position: absolute;
+  left: 50%;
+  top: 48%;
+  z-index: 0;
+  width: clamp(210px, 19vw, 300px);
+  height: auto;
+  border-radius: 18px;
+  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.5);
+  transform: translate(-50%, -50%);
+}
+
 .sparkCircle {
   width: 48px;
   aspect-ratio: 1;
@@ -2172,6 +2184,11 @@ main {
     touch-action: none !important;
     -webkit-user-select: none;
     user-select: none;
+  }
+
+  .heroLanyardFallback {
+    top: 57%;
+    width: min(54vw, 235px);
   }
 
   .heroMetrics {

@@ -135,6 +135,7 @@ function App() {
   const [lanyardReady, setLanyardReady] = useState(false);
   const [criticalAssetsReady, setCriticalAssetsReady] = useState(false);
   const [lanyardVisualReady, setLanyardVisualReady] = useState(false);
+  const [loadSafetyReleased, setLoadSafetyReleased] = useState(false);
   const siteCursorRef = useRef(null);
   const loaderStartedAtRef = useRef(performance.now());
   const loadProgressRef = useRef(1);
@@ -247,6 +248,11 @@ function App() {
 
   useEffect(() => {
     let cancelled = false;
+    const safetyTimer = window.setTimeout(() => {
+      if (cancelled) return;
+      setCriticalAssetsReady(true);
+      setLoadSafetyReleased(true);
+    }, 8000);
     const preloadImage = (src) => new Promise((resolve) => {
       const image = new Image();
       const finish = () => resolve();
@@ -258,31 +264,37 @@ function App() {
       image.src = src;
     });
 
-    Promise.all([
-      import('./ColorBends'),
-      import('./Lanyard'),
+    const colorBendsTask = import('./ColorBends').then(() => {
+      if (!cancelled) setHeroEffectsReady(true);
+    });
+    const lanyardTask = import('./Lanyard').then(() => {
+      if (!cancelled) setLanyardReady(true);
+    });
+
+    Promise.allSettled([
+      colorBendsTask,
+      lanyardTask,
       preloadImage(badgeFront),
       preloadImage(profileEditorial)
     ]).then(() => {
       if (cancelled) return;
-      setHeroEffectsReady(true);
-      setLanyardReady(true);
       setCriticalAssetsReady(true);
     });
 
     return () => {
       cancelled = true;
+      window.clearTimeout(safetyTimer);
     };
   }, []);
 
   useEffect(() => {
-    if (!criticalAssetsReady || !lanyardVisualReady) return undefined;
+    if (!criticalAssetsReady || (!lanyardVisualReady && !loadSafetyReleased)) return undefined;
     if (loadFinishStartedAtRef.current === null) {
       loadFinishFromRef.current = loadProgressRef.current;
       loadFinishStartedAtRef.current = performance.now();
     }
     return undefined;
-  }, [criticalAssetsReady, lanyardVisualReady]);
+  }, [criticalAssetsReady, lanyardVisualReady, loadSafetyReleased]);
 
   useEffect(() => {
     const cursor = siteCursorRef.current;
@@ -669,6 +681,9 @@ function App() {
           </div>
 
           <div className="heroLanyard" aria-label="陈博智设计师挂绳身份牌">
+            {!lanyardVisualReady && (
+              <img className="heroLanyardFallback" src={badgeFront} alt="陈博智设计师身份牌" decoding="async" />
+            )}
             {lanyardReady && (
               <Suspense fallback={null}>
                 <Lanyard
