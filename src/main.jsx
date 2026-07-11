@@ -31,6 +31,12 @@ const bellonaPages = Object.entries(
   .sort(([a], [b]) => a.localeCompare(b))
   .map(([, page]) => page);
 
+const ganbeiPages = Object.entries(
+  import.meta.glob('./assets/ganbei/*.jpg', { eager: true, import: 'default' })
+)
+  .sort(([a], [b]) => a.localeCompare(b))
+  .map(([, page]) => page);
+
 const navItems = ['经历', '项目', '联系'];
 const pillNavItems = navItems.map((item) => ({ label: item, href: `#${item}` }));
 
@@ -41,14 +47,17 @@ const projects = [
     type: '医美/vi/包装',
     meta: '百洛娜品牌识别、包装系统与商业物料延展',
     className: 'project-medical',
-    cover: bellonaCoverClean
+    cover: bellonaCoverClean,
+    pages: bellonaPages
   },
   {
     id: '02',
-    title: 'AI Campaign Visuals',
-    type: 'AI海报 / 新媒体 / 营销节点',
-    meta: '小红书视觉体系与内容风格',
-    className: 'project-ai'
+    title: '乾杯醺茶\n品牌视觉',
+    type: '茶饮 / 国风 / 品牌',
+    meta: '乾杯醺茶品牌视觉系统与国风茶饮场景延展',
+    className: 'project-ai',
+    cover: ganbeiPages[0],
+    pages: ganbeiPages
   },
   {
     id: '03',
@@ -224,7 +233,7 @@ function App() {
   }, []);
 
   const openProject = (project, event) => {
-    if (project.id !== '01') return;
+    if (!project.pages?.length) return;
     const rect = event.currentTarget.getBoundingClientRect();
     setModalOrigin({
       left: rect.left,
@@ -692,23 +701,23 @@ function App() {
               glowRadius={34}
               glowIntensity={1.25}
               coneSpread={30}
-              animated={project.id === '01'}
+              animated={Boolean(project.pages?.length)}
               fillOpacity={0.38}
               colors={['#e3272d', '#f3f1eb', '#2cc9ff']}
             >
               <TiltedCard scaleOnHover={1.04} rotateAmplitude={7}>
                 <article
-                  className={`projectCard ${project.className} ${project.id === '01' ? 'isClickable isCaseCover' : ''}`}
+                  className={`projectCard ${project.className} ${project.pages?.length ? 'isClickable isCaseCover' : ''}`}
                   onClick={(event) => openProject(project, event)}
                   onKeyDown={(event) => {
-                    if (project.id === '01' && (event.key === 'Enter' || event.key === ' ')) {
+                    if (project.pages?.length && (event.key === 'Enter' || event.key === ' ')) {
                       event.preventDefault();
                       openProject(project, event);
                     }
                   }}
-                  role={project.id === '01' ? 'button' : undefined}
-                  tabIndex={project.id === '01' ? 0 : undefined}
-                  aria-label={project.id === '01' ? '打开 Bellona 品牌视觉升级项目' : undefined}
+                  role={project.pages?.length ? 'button' : undefined}
+                  tabIndex={project.pages?.length ? 0 : undefined}
+                  aria-label={project.pages?.length ? `打开${project.title.replace('\n', '')}项目` : undefined}
                 >
                   <div className="projectImage">
                     {project.cover && (
@@ -716,7 +725,12 @@ function App() {
                     )}
                     <span>{project.id}</span>
                     <div className="projectTitle">
-                      {project.id === '01' ? <>Bellona<br />品牌视觉升级</> : project.title}
+                      {project.title.split('\n').map((line, index) => (
+                        <React.Fragment key={line}>
+                          {index > 0 && <br />}
+                          {line}
+                        </React.Fragment>
+                      ))}
                     </div>
                   </div>
                   <div className="projectInfo">
@@ -756,24 +770,31 @@ function App() {
             className="projectModal"
             role="dialog"
             aria-modal="true"
-            aria-labelledby="bellona-modal-title"
+            aria-labelledby="project-modal-title"
             onClick={(event) => event.stopPropagation()}
           >
             <button className="projectModalClose" type="button" onClick={closeProject} aria-label="关闭项目">
               ×
             </button>
             <header className="projectModalHeader">
-              <span>01 CASE STUDY</span>
-              <h2 id="bellona-modal-title">Bellona<br />品牌视觉升级</h2>
-              <p>医美/vi/包装</p>
+              <span>{activeProject.id} CASE STUDY</span>
+              <h2 id="project-modal-title">
+                {activeProject.title.split('\n').map((line, index) => (
+                  <React.Fragment key={line}>
+                    {index > 0 && <br />}
+                    {line}
+                  </React.Fragment>
+                ))}
+              </h2>
+              <p>{activeProject.type}</p>
             </header>
             <div className="projectModalScroll">
               <div className="projectModalImages">
-                {bellonaPages.map((page, index) => (
+                {activeProject.pages.map((page, index) => (
                   <figure className="projectModalImage" key={page}>
                     <img
                       src={page}
-                      alt={`Bellona品牌视觉升级作品页 ${index + 1}`}
+                      alt={`${activeProject.title.replace('\n', '')}作品页 ${index + 1}`}
                       loading={index < 2 ? 'eager' : 'lazy'}
                       decoding="async"
                     />
