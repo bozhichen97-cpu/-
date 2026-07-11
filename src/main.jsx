@@ -923,3 +923,10 @@ function App() {
 }
 
 createRoot(document.getElementById('root')).render(<App />);
+
+// Keep the static first-paint cover until React's loader has rendered.
+requestAnimationFrame(() => {
+  requestAnimationFrame(() => {
+    document.getElementById('boot-cover')?.remove();
+  });
+});

@@ -4,8 +4,22 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>陈博智 | 视觉设计师 / AI设计师 / 品牌设计师</title>
+    <style>
+      html, body { margin: 0; background: #080808; }
+      #boot-cover {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        display: grid;
+        place-items: center;
+        color: rgba(227, 39, 45, 0.92);
+        background: radial-gradient(circle at 76% 28%, rgba(169, 29, 34, 0.3), transparent 30%), #080808;
+        font: 900 clamp(118px, 28vw, 520px)/0.78 Impact, "Arial Black", sans-serif;
+      }
+    </style>
   </head>
   <body>
+    <div id="boot-cover" aria-hidden="true">001</div>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
