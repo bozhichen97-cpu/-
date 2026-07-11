@@ -13,6 +13,8 @@ import {
 import badgeFront from './assets/badge-front.webp';
 import bellonaCoverClean from './assets/bellona-cover-clean.webp';
 import profileEditorial from './assets/profile-final.webp';
+import wechatQr from './assets/contact/wechat-qr.webp';
+import xiaohongshuQr from './assets/contact/xiaohongshu-qr.webp';
 import BorderGlow from './BorderGlow';
 import PillNav from './PillNav';
 import TiltedCard from './TiltedCard';
@@ -125,6 +127,7 @@ const timeline = [
 function App() {
   const [isNavFloating, setIsNavFloating] = useState(false);
   const [activeProject, setActiveProject] = useState(null);
+  const [isContactOpen, setIsContactOpen] = useState(false);
   const [expandedExperience, setExpandedExperience] = useState(0);
   const [loadProgress, setLoadProgress] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
@@ -365,13 +368,13 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (!activeProject) return undefined;
+    if (!activeProject && !isContactOpen) return undefined;
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     return () => {
       document.body.style.overflow = previousOverflow;
     };
-  }, [activeProject]);
+  }, [activeProject, isContactOpen]);
 
   useEffect(() => {
     if (isLoading) return undefined;
@@ -628,9 +631,9 @@ function App() {
             pillTextColor="#f3f1eb"
             ease="power3.out"
           />
-          <a className="outlineButton" href="mailto:374428307@qq.com">
+          <button className="outlineButton contactDialogTrigger" type="button" onClick={() => setIsContactOpen(true)}>
             联系我 <ArrowUpRight size={16} />
-          </a>
+          </button>
         </nav>
 
         <div className="heroStage">
@@ -786,7 +789,7 @@ function App() {
             <div className="sectionLabel">SELECTED PROJECTS</div>
             <h2>精选项目</h2>
           </div>
-          <a className="textButton" href="mailto:374428307@qq.com">获取完整作品集 <ArrowUpRight size={16} /></a>
+          <button className="textButton contactDialogTrigger" type="button" onClick={() => setIsContactOpen(true)}>获取完整作品集 <ArrowUpRight size={16} /></button>
         </div>
         <div className="projectGrid">
           {projects.map((project) => (
@@ -893,6 +896,36 @@ function App() {
         </div>
       )}
 
+      {isContactOpen && (
+        <div
+          className="contactModalLayer"
+          role="presentation"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) setIsContactOpen(false);
+          }}
+          onKeyDown={(event) => {
+            if (event.key === 'Escape') setIsContactOpen(false);
+          }}
+        >
+          <section className="contactModal" role="dialog" aria-modal="true" aria-labelledby="contact-modal-title">
+            <button className="contactModalClose" type="button" aria-label="关闭联系弹窗" onClick={() => setIsContactOpen(false)}>×</button>
+            <div className="contactModalIntro">
+              <span>LET'S WORK TOGETHER</span>
+              <h2 id="contact-modal-title">联系我</h2>
+              <p>欢迎交流品牌视觉、包装与完整作品集。</p>
+            </div>
+            <div className="contactModalDetails">
+              <a href="mailto:374428307@qq.com"><Mail size={18} /><span>邮箱</span><strong>374428307@qq.com</strong></a>
+              <div><Phone size={18} /><span>微信</span><strong>BzBzBzz1</strong></div>
+            </div>
+            <div className="contactQrGrid">
+              <figure><img src={wechatQr} alt="微信二维码" /><figcaption>微信</figcaption></figure>
+              <figure><img src={xiaohongshuQr} alt="小红书二维码" /><figcaption>小红书</figcaption></figure>
+            </div>
+          </section>
+        </div>
+      )}
+
       <section className="finalContact" id="联系">
         <div>
           <p className="eyebrow">LET'S CREATE SOMETHING BOLD.</p>
@@ -914,7 +947,7 @@ function App() {
             <a href="mailto:374428307@qq.com"><Mail size={20} />374428307@qq.com</a>
             <a href="tel:374428307"><Phone size={20} />联系 / 作品集沟通</a>
             <span><MapPin size={20} />青岛 · 可远程协作</span>
-            <a className="solidButton" href="mailto:374428307@qq.com">开始沟通 <ArrowUpRight size={17} /></a>
+            <button className="solidButton contactDialogTrigger" type="button" onClick={() => setIsContactOpen(true)}>开始沟通 <ArrowUpRight size={17} /></button>
           </div>
         </BorderGlow>
       </section>
