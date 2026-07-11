@@ -4,6 +4,7 @@ import {
   ArrowRight,
   ArrowUpRight,
   Globe2,
+  GraduationCap,
   Mail,
   MapPin,
   Phone,
@@ -665,6 +666,7 @@ function App() {
               <span><Mail size={17} />374428307@qq.com</span>
               <span><MapPin size={17} />青岛</span>
               <span><Sparkles size={17} />平面设计 / 品牌设计 / AI设计</span>
+              <span><GraduationCap size={17} />四川美术学院 · 产品设计本科</span>
             </div>
           </div>
           <aside className="profileAside" aria-label="设计方向与协作信息">
