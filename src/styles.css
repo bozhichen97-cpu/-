@@ -781,6 +781,170 @@ main {
   padding: 0 150px;
 }
 
+.experienceAccordion {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 16px;
+  max-width: 1040px;
+  margin: 0 auto;
+}
+
+.experienceAccordionItem {
+  padding: 0;
+  scroll-snap-align: none;
+  transition: transform 280ms ease;
+}
+
+.experienceAccordionItem::before,
+.experienceAccordionItem::after {
+  display: none;
+}
+
+.timelineStackCard.experienceAccordionItem > .tilted-card-figure {
+  min-height: 0 !important;
+}
+
+.experienceAccordionItem > .tilted-card-figure .tilted-card-inner {
+  height: auto;
+}
+
+.experienceAccordionItem .timelineGlowCard,
+.experienceAccordionItem .border-glow-inner {
+  height: auto;
+}
+
+.experienceAccordionItem article {
+  min-height: 0;
+  height: auto;
+  padding: 0;
+}
+
+.experienceAccordionTrigger {
+  width: 100%;
+  min-height: 122px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 54px;
+  align-items: center;
+  gap: 24px;
+  padding: 24px 30px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.experienceAccordionHeading {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr) 150px;
+  align-items: center;
+  gap: 24px;
+}
+
+.experienceAccordionHeading time {
+  color: var(--red);
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.experienceCompany {
+  color: #fff;
+  font-size: clamp(22px, 2.2vw, 32px);
+  font-weight: 950;
+  line-height: 1.1;
+}
+
+.experienceAccordionHeading strong {
+  color: #d8d3cc;
+  font-size: 14px;
+  text-align: right;
+}
+
+.experienceAccordionIcon {
+  width: 48px;
+  height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(227, 39, 45, 0.48);
+  border-radius: 50%;
+  color: var(--red);
+  font-size: 30px;
+  font-weight: 300;
+  line-height: 1;
+  transition: color 200ms ease, background-color 200ms ease, transform 260ms ease;
+}
+
+.experienceAccordionTrigger:hover .experienceAccordionIcon,
+.experienceAccordionItem.isExpanded .experienceAccordionIcon {
+  color: #fff;
+  background: var(--red);
+}
+
+.experienceAccordionItem.isExpanded .experienceAccordionIcon {
+  transform: rotate(180deg);
+}
+
+.experienceAccordionContent {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition: grid-template-rows 420ms cubic-bezier(0.19, 1, 0.22, 1), opacity 240ms ease;
+}
+
+.experienceAccordionContent > div {
+  min-height: 0;
+  overflow: hidden;
+  padding: 0 30px;
+}
+
+.experienceAccordionItem.isExpanded .experienceAccordionContent {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+
+.experienceAccordionItem.isExpanded .experienceAccordionContent > div {
+  padding-bottom: 30px;
+}
+
+.experienceAccordionContent p {
+  max-width: 900px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.75;
+}
+
+.experienceAccordionContent ul {
+  display: grid;
+  gap: 10px;
+  margin: 18px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.experienceAccordionContent li {
+  position: relative;
+  padding-left: 18px;
+  color: #c9c4bd;
+  font-size: 14px;
+  line-height: 1.72;
+}
+
+.experienceAccordionContent li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.78em;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--red);
+  box-shadow: 0 0 14px rgba(227,39,45,0.45);
+}
+
 .experienceBackdropTitle {
   position: relative;
   z-index: 0;
@@ -2214,6 +2378,61 @@ main {
     max-height: none;
     height: auto;
     object-fit: initial;
+  }
+
+  .experienceAccordion {
+    gap: 14px;
+  }
+
+  .experienceAccordionItem > .tilted-card-figure {
+    height: auto !important;
+  }
+
+  .experienceAccordionTrigger {
+    min-height: 116px;
+    grid-template-columns: minmax(0, 1fr) 42px;
+    gap: 14px;
+    padding: 20px 18px;
+  }
+
+  .experienceAccordionHeading {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  .experienceAccordionHeading time {
+    font-size: 11px;
+  }
+
+  .experienceCompany {
+    font-size: 23px;
+  }
+
+  .experienceAccordionHeading strong {
+    font-size: 13px;
+    text-align: left;
+  }
+
+  .experienceAccordionIcon {
+    width: 40px;
+    height: 40px;
+    font-size: 26px;
+  }
+
+  .experienceAccordionContent > div {
+    padding: 0 18px;
+  }
+
+  .experienceAccordionItem.isExpanded .experienceAccordionContent > div {
+    padding-bottom: 22px;
+  }
+
+  .experienceAccordionContent p {
+    font-size: 14px;
+  }
+
+  .experienceAccordionContent li {
+    font-size: 13px;
   }
 
   .verticalTimeline {

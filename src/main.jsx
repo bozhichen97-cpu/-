@@ -17,7 +17,6 @@ import cardModel from './assets/lanyard/card.glb';
 import profileEditorial from './assets/profile-final.webp';
 import BorderGlow from './BorderGlow';
 import PillNav from './PillNav';
-import ScrollStack, { ScrollStackItem } from './ScrollStack';
 import TiltedCard from './TiltedCard';
 import './styles.css';
 
@@ -122,6 +121,7 @@ function App() {
   const [isNavFloating, setIsNavFloating] = useState(false);
   const [activeProject, setActiveProject] = useState(null);
   const [modalOrigin, setModalOrigin] = useState(null);
+  const [expandedExperience, setExpandedExperience] = useState(0);
   const [loadProgress, setLoadProgress] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const [heroEffectsReady, setHeroEffectsReady] = useState(false);
@@ -610,31 +610,16 @@ function App() {
         </div>
 
         <div className="experienceTimeline">
-          <div className="timelineRail timelineRailLeft" aria-hidden="true">
-            {timeline.map(({ date }) => <span key={`left-${date}`}>{date}</span>)}
-          </div>
-          <div className="timelineRail timelineRailRight" aria-hidden="true">
-            {timeline.map(({ date }) => <span key={`right-${date}`}>{date}</span>)}
-          </div>
-          <ScrollStack
-            className="timeline timelineStack"
-            itemDistance={110}
-            itemScale={0.04}
-            itemStackDistance={34}
-            stackPosition="20%"
-            scaleEndPosition="10%"
-            baseScale={0.82}
-            rotationAmount={0.85}
-            blurAmount={0.75}
-            useWindowScroll
-          >
-            {timeline.map(({ date, company, role, intro, points }) => (
-              <ScrollStackItem key={company} itemClassName="timelineStackCard">
+          <div className="experienceAccordion">
+            {timeline.map(({ date, company, role, intro, points }, index) => {
+              const isExpanded = expandedExperience === index;
+              return (
+              <div className={`timelineStackCard experienceAccordionItem ${isExpanded ? 'isExpanded' : ''}`} key={company}>
                 <TiltedCard
-                  containerHeight="100%"
+                  containerHeight="auto"
                   containerWidth="100%"
                   rotateAmplitude={4.5}
-                  scaleOnHover={1.018}
+                  scaleOnHover={1.008}
                 >
                   <BorderGlow
                     className="timelineGlowCard"
@@ -649,21 +634,41 @@ function App() {
                     colors={['#e3272d', '#f3f1eb', '#2cc9ff']}
                   >
                     <article>
-                      <time>{date}</time>
-                      <h3>{company}</h3>
-                      <strong>{role}</strong>
-                      <p>{intro}</p>
-                      <ul>
-                        {points.map((point) => (
-                          <li key={point}>{point}</li>
-                        ))}
-                      </ul>
+                      <button
+                        className="experienceAccordionTrigger"
+                        type="button"
+                        aria-expanded={isExpanded}
+                        aria-controls={`experience-panel-${index}`}
+                        onClick={() => setExpandedExperience(index)}
+                      >
+                        <span className="experienceAccordionHeading">
+                          <time>{date}</time>
+                          <span className="experienceCompany">{company}</span>
+                          <strong>{role}</strong>
+                        </span>
+                        <span className="experienceAccordionIcon" aria-hidden="true">{isExpanded ? '−' : '+'}</span>
+                      </button>
+                      <div
+                        className="experienceAccordionContent"
+                        id={`experience-panel-${index}`}
+                        aria-hidden={!isExpanded}
+                      >
+                        <div>
+                          <p>{intro}</p>
+                          <ul>
+                            {points.map((point) => (
+                              <li key={point}>{point}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
                     </article>
                   </BorderGlow>
                 </TiltedCard>
-              </ScrollStackItem>
-            ))}
-          </ScrollStack>
+              </div>
+              );
+            })}
+          </div>
         </div>
       </section>
 
