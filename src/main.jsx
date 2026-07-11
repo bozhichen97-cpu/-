@@ -1,4 +1,4 @@
-import React, { lazy, Suspense, useEffect, useRef, useState } from 'react';
+import React, { lazy, Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import {
   ArrowRight,
@@ -136,6 +136,61 @@ function App() {
   const [heroEffectsReady, setHeroEffectsReady] = useState(false);
   const [lanyardReady, setLanyardReady] = useState(false);
   const siteCursorRef = useRef(null);
+
+  useLayoutEffect(() => {
+    if (!isLoading) return undefined;
+
+    const scrollY = window.scrollY;
+    const html = document.documentElement;
+    const body = document.body;
+    const previous = {
+      htmlOverflow: html.style.overflow,
+      htmlOverscrollBehavior: html.style.overscrollBehavior,
+      htmlScrollBehavior: html.style.scrollBehavior,
+      bodyOverflow: body.style.overflow,
+      bodyOverscrollBehavior: body.style.overscrollBehavior,
+      bodyTouchAction: body.style.touchAction,
+      bodyPosition: body.style.position,
+      bodyTop: body.style.top,
+      bodyWidth: body.style.width
+    };
+    const blockedKeys = new Set([
+      'ArrowDown', 'ArrowUp', 'End', 'Home', 'PageDown', 'PageUp', 'Space'
+    ]);
+    const preventScroll = (event) => event.preventDefault();
+    const preventKeyboardScroll = (event) => {
+      if (blockedKeys.has(event.code) || blockedKeys.has(event.key)) event.preventDefault();
+    };
+
+    html.style.overflow = 'hidden';
+    html.style.overscrollBehavior = 'none';
+    body.style.overflow = 'hidden';
+    body.style.overscrollBehavior = 'none';
+    body.style.touchAction = 'none';
+    body.style.position = 'fixed';
+    body.style.top = `-${scrollY}px`;
+    body.style.width = '100%';
+    window.addEventListener('wheel', preventScroll, { passive: false });
+    window.addEventListener('touchmove', preventScroll, { passive: false });
+    window.addEventListener('keydown', preventKeyboardScroll, { passive: false });
+
+    return () => {
+      window.removeEventListener('wheel', preventScroll);
+      window.removeEventListener('touchmove', preventScroll);
+      window.removeEventListener('keydown', preventKeyboardScroll);
+      html.style.overflow = previous.htmlOverflow;
+      html.style.overscrollBehavior = previous.htmlOverscrollBehavior;
+      html.style.scrollBehavior = 'auto';
+      body.style.overflow = previous.bodyOverflow;
+      body.style.overscrollBehavior = previous.bodyOverscrollBehavior;
+      body.style.touchAction = previous.bodyTouchAction;
+      body.style.position = previous.bodyPosition;
+      body.style.top = previous.bodyTop;
+      body.style.width = previous.bodyWidth;
+      window.scrollTo(0, scrollY);
+      html.style.scrollBehavior = previous.htmlScrollBehavior;
+    };
+  }, [isLoading]);
 
   useEffect(() => {
     let cancelled = false;
