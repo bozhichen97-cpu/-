@@ -601,7 +601,7 @@ function App() {
         <defs>
           <filter id="cursorFisheye" x="-20%" y="-20%" width="140%" height="140%">
             <feTurbulence type="fractalNoise" baseFrequency="0.015" numOctaves="1" seed="7" result="lensNoise" />
-            <feDisplacementMap in="SourceGraphic" in2="lensNoise" scale="10" xChannelSelector="R" yChannelSelector="G" />
+            <feDisplacementMap in="SourceGraphic" in2="lensNoise" scale="20" xChannelSelector="R" yChannelSelector="G" />
           </filter>
         </defs>
       </svg>
