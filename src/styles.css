@@ -2316,16 +2316,35 @@ main {
     height: auto;
     min-height: 0;
     aspect-ratio: 3 / 4;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    contain: layout paint;
   }
 
   .aboutGrid {
     gap: 28px;
   }
 
+  .about.section {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
   .aboutGrid > .tilted-card-figure {
     width: min(76vw, 280px) !important;
     height: min(102vw, 374px) !important;
     justify-self: center;
+    perspective: none;
+  }
+
+  .aboutGrid > .tilted-card-figure .tilted-card-inner {
+    transform: none !important;
+    transform-style: flat;
+    will-change: auto;
+  }
+
+  .portraitTiltLabel {
+    transform: none;
   }
 
   .section {

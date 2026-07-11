@@ -559,16 +559,19 @@ function App() {
         });
       });
 
-      gsap.to('.portraitCard img', {
-        yPercent: -8,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: '.about',
-          start: 'top bottom',
-          end: 'bottom top',
-          scrub: 1.2
-        }
-      });
+      const isTouchLayout = window.matchMedia('(pointer: coarse), (max-width: 768px)').matches;
+      if (!isTouchLayout) {
+        gsap.to('.portraitCard img', {
+          yPercent: -8,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: '.about',
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: 1.2
+          }
+        });
+      }
 
       gsap.to('.timelineRail', {
         yPercent: -5,
