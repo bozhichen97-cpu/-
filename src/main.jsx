@@ -513,7 +513,7 @@ function App() {
         const title = section.querySelector('.sectionHead h2, .statement h2, .about h2, .finalContact h2');
         const label = section.querySelector('.sectionLabel');
         const cards = section.querySelectorAll('.projectGlowCard, .profileStaticCard, .timelineStackCard, .strengthGlowCard');
-        const images = section.querySelectorAll('.portraitCard, .projectImage');
+        const images = section.querySelectorAll('.portraitCard');
 
         if (label) {
           gsap.fromTo(label, { y: 44, autoAlpha: 0 }, {
