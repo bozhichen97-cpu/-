@@ -166,9 +166,9 @@ main {
   box-shadow:
     0 0 0 1px rgba(227, 39, 45, 0.12),
     0 0 24px rgba(227, 39, 45, 0.2);
-  background: transparent;
-  backdrop-filter: contrast(1.22) saturate(1.38);
-  -webkit-backdrop-filter: contrast(1.22) saturate(1.38);
+  background: rgba(255, 255, 255, 0.01);
+  -webkit-backdrop-filter: contrast(1.32) saturate(1.5);
+  backdrop-filter: contrast(1.32) saturate(1.5);
   transition: opacity 180ms ease, width 220ms ease, height 220ms ease, background-color 220ms ease;
   will-change: transform, width, height;
 }
@@ -193,7 +193,7 @@ main {
 .siteCursor.isActive {
   width: 86px;
   height: 86px;
-  background: transparent;
+  background: rgba(255, 255, 255, 0.01);
 }
 
 @media (pointer: coarse) {
