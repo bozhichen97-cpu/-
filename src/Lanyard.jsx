@@ -81,7 +81,8 @@ export default function Lanyard({
   backImage = null,
   imageFit = 'cover',
   lanyardImage = null,
-  lanyardWidth = 1
+  lanyardWidth = 1,
+  onReady = null
 }) {
   const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' && window.innerWidth < 768);
   const [isVisible, setIsVisible] = useState(true);
@@ -124,6 +125,7 @@ export default function Lanyard({
             imageFit={imageFit}
             lanyardImage={lanyardImage}
             lanyardWidth={lanyardWidth}
+            onReady={onReady}
           />
         </Physics>
         <Environment blur={0.75}>
@@ -145,7 +147,8 @@ function Band({
   backImage = null,
   imageFit = 'cover',
   lanyardImage = null,
-  lanyardWidth = 1
+  lanyardWidth = 1,
+  onReady = null
 }) {
   const band = useRef();
   const fixed = useRef();
@@ -212,6 +215,10 @@ function Band({
   );
   const [dragged, drag] = useState(false);
   const [hovered, hover] = useState(false);
+
+  useEffect(() => {
+    onReady?.();
+  }, [onReady, cardMap, texture, frontTex, backTex]);
 
   useRopeJoint(fixed, j1, [[0, 0, 0], [0, 0, 0], 1]);
   useRopeJoint(j1, j2, [[0, 0, 0], [0, 0, 0], 1]);

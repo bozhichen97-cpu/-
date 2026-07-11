@@ -130,7 +130,10 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [heroEffectsReady, setHeroEffectsReady] = useState(false);
   const [lanyardReady, setLanyardReady] = useState(false);
+  const [criticalAssetsReady, setCriticalAssetsReady] = useState(false);
+  const [lanyardVisualReady, setLanyardVisualReady] = useState(false);
   const siteCursorRef = useRef(null);
+  const loaderStartedAtRef = useRef(Date.now());
 
   useLayoutEffect(() => {
     if (!isLoading) return undefined;
@@ -188,32 +191,47 @@ function App() {
   }, [isLoading]);
 
   useEffect(() => {
-    const progressTimer = window.setTimeout(() => setLoadProgress(86), 180);
-    const completeTimer = window.setTimeout(() => {
+    let cancelled = false;
+    const preloadImage = (src) => new Promise((resolve) => {
+      const image = new Image();
+      const finish = () => resolve();
+      image.onload = () => {
+        if (image.decode) image.decode().catch(() => {}).finally(finish);
+        else finish();
+      };
+      image.onerror = finish;
+      image.src = src;
+    });
+
+    Promise.all([
+      import('./ColorBends'),
+      import('./Lanyard'),
+      preloadImage(badgeFront),
+      preloadImage(profileEditorial)
+    ]).then(() => {
+      if (cancelled) return;
+      setLoadProgress(72);
       setHeroEffectsReady(true);
-      setLoadProgress(100);
-      setIsLoading(false);
-    }, 620);
+      setLanyardReady(true);
+      setCriticalAssetsReady(true);
+    });
 
     return () => {
-      window.clearTimeout(progressTimer);
-      window.clearTimeout(completeTimer);
+      cancelled = true;
     };
   }, []);
 
   useEffect(() => {
-    if (isLoading) return undefined;
+    if (!criticalAssetsReady || !lanyardVisualReady) return undefined;
 
-    const loadLanyard = () => setLanyardReady(true);
-    const scheduleIdle = window.requestIdleCallback
-      ? window.requestIdleCallback(loadLanyard, { timeout: 2600 })
-      : window.setTimeout(loadLanyard, 1200);
+    setLoadProgress(100);
+    const minimumDelay = Math.max(0, 900 - (Date.now() - loaderStartedAtRef.current));
+    const completeTimer = window.setTimeout(() => setIsLoading(false), minimumDelay + 220);
 
     return () => {
-      if (window.cancelIdleCallback) window.cancelIdleCallback(scheduleIdle);
-      else window.clearTimeout(scheduleIdle);
+      window.clearTimeout(completeTimer);
     };
-  }, [isLoading]);
+  }, [criticalAssetsReady, lanyardVisualReady]);
 
   useEffect(() => {
     const cursor = siteCursorRef.current;
@@ -588,7 +606,13 @@ function App() {
           <div className="heroLanyard" aria-label="陈博智设计师挂绳身份牌">
             {lanyardReady && (
               <Suspense fallback={null}>
-                <Lanyard position={[0, 0, 10]} fov={34} frontImage={badgeFront} imageFit="cover" />
+                <Lanyard
+                  position={[0, 0, 10]}
+                  fov={34}
+                  frontImage={badgeFront}
+                  imageFit="cover"
+                  onReady={() => setLanyardVisualReady(true)}
+                />
               </Suspense>
             )}
           </div>
@@ -625,7 +649,7 @@ function App() {
             scaleOnHover={1.08}
           >
             <div className="portraitCard">
-              <img src={profileEditorial} alt="陈博智个人视觉大片照片" loading="lazy" decoding="async" />
+              <img src={profileEditorial} alt="陈博智个人视觉大片照片" loading="eager" fetchPriority="high" decoding="async" />
               <div className="portraitTiltLabel" aria-hidden="true">
                 <span>VISUAL DESIGNER</span>
                 <strong>CBZ.</strong>
