@@ -9,11 +9,8 @@ import {
   Phone,
   Sparkles
 } from 'lucide-react';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import badgeFront from './assets/badge-front.webp';
 import bellonaCoverClean from './assets/bellona-cover-clean.webp';
-import cardModel from './assets/lanyard/card.glb';
 import profileEditorial from './assets/profile-final.webp';
 import BorderGlow from './BorderGlow';
 import PillNav from './PillNav';
@@ -22,8 +19,6 @@ import './styles.css';
 
 const ColorBends = lazy(() => import('./ColorBends'));
 const Lanyard = lazy(() => import('./Lanyard'));
-
-gsap.registerPlugin(ScrollTrigger);
 
 const bellonaPages = Object.entries(
   import.meta.glob('./assets/bellona/*.jpg', { eager: true, import: 'default' })
@@ -193,56 +188,32 @@ function App() {
   }, [isLoading]);
 
   useEffect(() => {
-    let cancelled = false;
-    let completedWeight = 1;
-    const startedAt = Date.now();
-    const updateProgress = (weight) => {
-      completedWeight += weight;
-      if (!cancelled) setLoadProgress(Math.min(99, completedWeight));
-    };
-    const preloadImage = (src, weight) => new Promise((resolve) => {
-      const image = new Image();
-      const finish = () => {
-        updateProgress(weight);
-        resolve();
-      };
-      image.onload = () => {
-        if (image.decode) image.decode().catch(() => {}).finally(finish);
-        else finish();
-      };
-      image.onerror = finish;
-      image.src = src;
-    });
-    const preloadModule = (loader, weight) => loader()
-      .catch(() => null)
-      .then(() => updateProgress(weight));
-    const preloadModel = fetch(cardModel, { cache: 'force-cache' })
-      .then((response) => response.ok ? response.arrayBuffer() : null)
-      .catch(() => null)
-      .then(() => updateProgress(28));
-
-    Promise.all([
-      preloadModule(() => import('./ColorBends'), 10),
-      preloadModule(() => import('./Lanyard'), 25),
-      preloadImage(badgeFront, 12),
-      preloadImage(profileEditorial, 14),
-      preloadImage(bellonaCoverClean, 5),
-      preloadModel
-    ]).then(() => {
-      if (cancelled) return;
+    const progressTimer = window.setTimeout(() => setLoadProgress(86), 180);
+    const completeTimer = window.setTimeout(() => {
       setHeroEffectsReady(true);
-      setLanyardReady(true);
       setLoadProgress(100);
-      const minimumDelay = Math.max(0, 900 - (Date.now() - startedAt));
-      window.setTimeout(() => {
-        if (!cancelled) setIsLoading(false);
-      }, minimumDelay + 650);
-    });
+      setIsLoading(false);
+    }, 620);
 
     return () => {
-      cancelled = true;
+      window.clearTimeout(progressTimer);
+      window.clearTimeout(completeTimer);
     };
   }, []);
+
+  useEffect(() => {
+    if (isLoading) return undefined;
+
+    const loadLanyard = () => setLanyardReady(true);
+    const scheduleIdle = window.requestIdleCallback
+      ? window.requestIdleCallback(loadLanyard, { timeout: 2600 })
+      : window.setTimeout(loadLanyard, 1200);
+
+    return () => {
+      if (window.cancelIdleCallback) window.cancelIdleCallback(scheduleIdle);
+      else window.clearTimeout(scheduleIdle);
+    };
+  }, [isLoading]);
 
   useEffect(() => {
     const cursor = siteCursorRef.current;
@@ -334,11 +305,22 @@ function App() {
   }, [activeProject]);
 
   useEffect(() => {
+    if (isLoading) return undefined;
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reduceMotion) return undefined;
+    let disposed = false;
+    let ctx;
     let openingFallback;
 
-    const ctx = gsap.context(() => {
+    const initialiseAnimations = async () => {
+      const [{ gsap }, { ScrollTrigger }] = await Promise.all([
+        import('gsap'),
+        import('gsap/ScrollTrigger')
+      ]);
+      if (disposed) return;
+
+      gsap.registerPlugin(ScrollTrigger);
+      ctx = gsap.context(() => {
       const finishOpening = () => {
         gsap.set('.openingCurtain', { autoAlpha: 0, clipPath: 'inset(0 0 100% 0)' });
         gsap.set('.heroBackdropTitle', { y: 0, scaleX: 1, clipPath: 'inset(0 0 0% 0)' });
@@ -518,13 +500,17 @@ function App() {
           scrub: 1.3
         }
       });
-    });
+      });
+    };
+
+    initialiseAnimations();
 
     return () => {
+      disposed = true;
       window.clearTimeout(openingFallback);
-      ctx.revert();
+      ctx?.revert();
     };
-  }, []);
+  }, [isLoading]);
 
   return (
     <main>
