@@ -13,6 +13,7 @@ import {
 import badgeFront from './assets/badge-front.webp';
 import bellonaCoverClean from './assets/bellona-cover-clean.webp';
 import profileEditorial from './assets/profile-final.webp';
+import packagingCover from './assets/packaging-cover.webp';
 import wechatQr from './assets/contact/wechat-qr.webp';
 import xiaohongshuQr from './assets/contact/xiaohongshu-qr.webp';
 import BorderGlow from './BorderGlow';
@@ -31,6 +32,12 @@ const bellonaPages = Object.entries(
 
 const ganbeiPages = Object.entries(
   import.meta.glob('./assets/ganbei/*.jpg', { eager: true, import: 'default' })
+)
+  .sort(([a], [b]) => a.localeCompare(b))
+  .map(([, page]) => page);
+
+const packagingPages = Object.entries(
+  import.meta.glob('./assets/packaging/*.webp', { eager: true, import: 'default' })
 )
   .sort(([a], [b]) => a.localeCompare(b))
   .map(([, page]) => page);
@@ -66,10 +73,12 @@ const projects = [
   },
   {
     id: '04',
-    title: 'Beauty Packaging',
-    type: '包装系统 / 礼盒 / 陈列',
-    meta: '护肤品包装与终端展示延展',
-    className: 'project-packaging'
+    title: '包装设计',
+    type: '包装系统 / 礼盒',
+    meta: '医美包装与礼盒包装延展',
+    className: 'project-packaging',
+    cover: packagingCover,
+    pages: packagingPages
   },
   {
     id: '05',
