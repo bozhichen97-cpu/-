@@ -495,6 +495,8 @@ function App() {
           duration: 0.85
         }, '-=0.5');
 
+      const isTouchLayout = window.matchMedia('(pointer: coarse), (max-width: 768px)').matches;
+      if (!isTouchLayout) {
       gsap.to('.heroBackdropTitle', {
         yPercent: -8,
         ease: 'none',
@@ -571,9 +573,7 @@ function App() {
         });
       });
 
-      const isTouchLayout = window.matchMedia('(pointer: coarse), (max-width: 768px)').matches;
-      if (!isTouchLayout) {
-        gsap.to('.portraitCard img', {
+      gsap.to('.portraitCard img', {
           yPercent: -8,
           ease: 'none',
           scrollTrigger: {
@@ -582,8 +582,7 @@ function App() {
             end: 'bottom top',
             scrub: 1.2
           }
-        });
-      }
+      });
 
       gsap.to('.timelineRail', {
         yPercent: -5,
@@ -595,6 +594,7 @@ function App() {
           scrub: 1.3
         }
       });
+      }
       });
     };
 

@@ -2059,7 +2059,20 @@ main {
   }
 
   .nav {
+    position: fixed;
+    top: 10px;
+    left: 12px;
+    right: 12px;
+    width: auto;
     height: 72px;
+    padding: 0 16px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 18px;
+    background: rgba(9, 9, 9, 0.88);
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.32);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    transition: none;
   }
 
   .nav .pill-logo {
@@ -2091,6 +2104,9 @@ main {
     right: 12px;
     width: auto;
     padding: 0 16px;
+    background: rgba(9, 9, 9, 0.88);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
   }
 
   .outlineButton {
