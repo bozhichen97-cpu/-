@@ -166,14 +166,23 @@ main {
     0 0 0 1px rgba(227, 39, 45, 0.12),
     0 0 24px rgba(227, 39, 45, 0.2);
   background: transparent;
-  backdrop-filter: url(#cursorFisheye) contrast(1.22) saturate(1.38);
+  backdrop-filter: contrast(1.22) saturate(1.38);
   -webkit-backdrop-filter: contrast(1.22) saturate(1.38);
   transition: opacity 180ms ease, width 220ms ease, height 220ms ease, background-color 220ms ease;
   will-change: transform, width, height;
 }
 
 .siteCursor::after {
-  content: none;
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--red);
+  box-shadow: 0 0 9px rgba(227, 39, 45, 0.5);
+  transform: translate(-50%, -50%);
 }
 
 .siteCursor.isVisible {
@@ -184,13 +193,6 @@ main {
   width: 86px;
   height: 86px;
   background: transparent;
-}
-
-.cursorFilterDefs {
-  position: fixed;
-  width: 0;
-  height: 0;
-  pointer-events: none;
 }
 
 @media (pointer: coarse) {
