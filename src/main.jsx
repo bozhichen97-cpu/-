@@ -231,11 +231,12 @@ const projects = [
   },
   {
     id: '04',
-    title: '小红书\n内容设计',
+    title: '设计账号运营',
+    singleLineTitle: true,
     type: '选题策划 / 封面设计 / 多图内容',
     meta: '从选题到整套视觉，构建设计知识型社媒内容',
     className: 'project-social',
-    cover: xhsGridPages[xhsGridPages.length - 1],
+    cover: xhsDailyInspirationPages[xhsDailyInspirationPages.length - 1],
     pages: [...xhsGridPages, ...xhsHalftonePages],
     socialCase: {
       period: '2024.10.10 — 至今',
@@ -273,11 +274,27 @@ const projects = [
         },
         {
           index: '04',
-          kicker: 'COLOR & INSPIRATION',
-          title: '春日调色盘｜系列栏目',
-          metric: '9 张配色内容',
-          description: '围绕季节情绪策划配色主题，用色值、色块与应用画面组成可直接收藏和复用的灵感内容。',
-          pages: xhsSpringColorPages
+          kicker: 'EDITORIAL DESIGN',
+          title: '标题设计感｜排版方法',
+          metric: '5 张排版内容',
+          description: '围绕标题层级、字体组合与画面节奏拆解设计方法，把抽象的“设计感”转化为可直接练习的排版思路。',
+          pages: xhsTitleDesignPages
+        },
+        {
+          index: '05',
+          kicker: 'FIGMA TUTORIAL',
+          title: '一秒分型｜效果制作教程',
+          metric: '7 张步骤教程',
+          description: '以明确的最终效果吸引点击，再通过连续步骤展示 Figma 中的制作过程，兼顾视觉吸引力与工具实用性。',
+          pages: xhsFigmaSplitPages
+        },
+        {
+          index: '06',
+          kicker: 'IMAGE MAKING',
+          title: '照片变氛围感海报｜视觉教程',
+          metric: '8 张完整图文',
+          description: '从普通照片出发，拆解构图、色彩、文字与氛围塑造方法，呈现从素材到成品海报的完整视觉路径。',
+          pages: xhsPosterPages
         }
       ],
       collections: [
@@ -305,6 +322,7 @@ const projects = [
           title: '配色与审美灵感',
           description: '通过主题化收集、筛选与再编排，建立稳定更新的灵感栏目。',
           items: [
+            { title: '春日调色盘', cover: xhsSpringColorPages[0] },
             { title: '饭圈配色', cover: xhsKpopColorPages[0] },
             { title: '圣诞节配色', cover: xhsChristmasColorPages[0] },
             { title: '视觉公众号参考', cover: xhsVisualAccountsPages[0] },
@@ -1085,7 +1103,7 @@ function App() {
                       <img className="projectCoverImage" src={project.cover} alt="" aria-hidden="true" loading="lazy" decoding="async" />
                     )}
                     <span>{project.id}</span>
-                    <div className="projectTitle">
+                    <div className={`projectTitle ${project.singleLineTitle ? 'isSingleLine' : ''}`}>
                       {project.title.split('\n').map((line, index) => (
                         <React.Fragment key={line}>
                           {index > 0 && <br />}
