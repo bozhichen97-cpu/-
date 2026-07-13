@@ -16,6 +16,8 @@ import profileEditorial from './assets/profile-final.webp';
 import packagingCover from './assets/packaging-cover.webp';
 import wechatQr from './assets/contact/wechat-qr.webp';
 import xiaohongshuQr from './assets/contact/xiaohongshu-qr.webp';
+import xhsRedPacket from './assets/xiaohongshu/red-packet.jpg';
+import xhsRedPacketVideo from './assets/xiaohongshu/red-packet.mp4';
 import BorderGlow from './BorderGlow';
 import PillNav from './PillNav';
 import TiltedCard from './TiltedCard';
@@ -42,57 +44,270 @@ const packagingPages = Object.entries(
   .sort(([a], [b]) => a.localeCompare(b))
   .map(([, page]) => page);
 
+const packagingExtraPages = Object.entries(
+  import.meta.glob('./assets/packaging-extras/*.webp', { eager: true, import: 'default' })
+)
+  .sort(([a], [b]) => a.localeCompare(b))
+  .map(([, page]) => page);
+
+const gangshangPackagingPages = Object.entries(
+  import.meta.glob('./assets/packaging-gangshang/*.webp', { eager: true, import: 'default' })
+)
+  .sort(([a], [b]) => a.localeCompare(b))
+  .map(([, page]) => page);
+
+const loadBrandPdfSeries = (folder) => Object.entries(
+  import.meta.glob('./assets/brand-pdf/*/*.webp', { eager: true, import: 'default' })
+)
+  .filter(([path]) => path.includes(`/brand-pdf/${folder}/`))
+  .sort(([a], [b]) => a.localeCompare(b))
+  .map(([, page]) => page);
+
+const bellonaViPages = loadBrandPdfSeries('bellona-vi');
+const communityLogoPages = loadBrandPdfSeries('community-logo');
+const gangshangKaihuaPages = loadBrandPdfSeries('gangshang-kaihua');
+const youbenCommercePages = loadBrandPdfSeries('youben-commerce');
+
+const loadXhsSeries = (pattern) => Object.entries(
+  import.meta.glob('./assets/xiaohongshu/*/*.jpg', { eager: true, import: 'default' })
+)
+  .filter(([path]) => path.includes(`/xiaohongshu/${pattern}/`))
+  .sort(([a], [b]) => a.localeCompare(b))
+  .map(([, page]) => page);
+
+const xhsHalftonePages = loadXhsSeries('halftone');
+const xhsGridPages = loadXhsSeries('grid');
+const xhsFigmaPluginPages = loadXhsSeries('figma-plugin');
+const xhsFigmaSplitPages = loadXhsSeries('figma-split');
+const xhsTitleDesignPages = loadXhsSeries('title-design');
+const xhsSpringColorPages = loadXhsSeries('spring-color');
+const xhsPortfolioCoverPages = loadXhsSeries('portfolio-cover');
+const xhsKpopColorPages = loadXhsSeries('kpop-color');
+const xhsFontSharePages = loadXhsSeries('font-share');
+const xhsChristmasColorPages = loadXhsSeries('christmas-color');
+const xhsVisualAccountsPages = loadXhsSeries('visual-accounts');
+const xhsJellycatPages = loadXhsSeries('jellycat');
+const xhsWebsitesPages = loadXhsSeries('websites');
+const xhsDailyInspirationPages = loadXhsSeries('daily-inspiration');
+const xhsEmptySpacePages = loadXhsSeries('empty-space');
+const xhsFigmaButtonPages = loadXhsSeries('figma-button');
+const xhsBrandPages = loadXhsSeries('brand');
+const xhsPosterPages = loadXhsSeries('poster');
+const xhsFigmaCardPages = loadXhsSeries('figma-card');
+
 const navItems = ['经历', '项目', '联系'];
 const pillNavItems = navItems.map((item) => ({ label: item, href: `#${item}` }));
 
 const projects = [
   {
     id: '01',
-    title: 'Bellona\n品牌视觉升级',
-    type: '医美/vi/包装',
-    meta: '百洛娜品牌识别、包装系统与商业物料延展',
-    className: 'project-medical',
+    title: '品牌视觉\n与系统设计',
+    type: '品牌识别 / VI 系统 / 商业延展',
+    meta: 'Bellona 与乾杯醺茶两组完整品牌案例',
+    className: 'project-brand',
     cover: bellonaCoverClean,
-    pages: bellonaPages
+    pages: [...bellonaPages, ...ganbeiPages],
+    brandCase: {
+      summary: '通过品牌定位、核心识别与多场景延展，把不同品类的品牌概念转化为统一、清晰且可落地的视觉系统。',
+      role: '品牌概念 · 视觉识别 · 包装与物料延展',
+      stats: [
+        ['5', '组品牌与规范案例'],
+        ['60+', '张精选系统展示'],
+        ['5', '类品牌应用场景']
+      ],
+      projects: [
+        {
+          index: '01',
+          title: 'Bellona 品牌视觉升级',
+          type: 'MEDICAL AESTHETICS',
+          description: '先呈现升级前的原有 VI 规范，再展示围绕医美品牌专业感与品质感完成的视觉升级、包装系统与商业物料延展。',
+          pages: [...bellonaViPages, ...bellonaPages]
+        },
+        {
+          index: '02',
+          title: '乾杯醺茶品牌视觉',
+          type: 'TEA & ORIENTAL CULTURE',
+          description: '从国风文化与茶饮场景出发，完成品牌标识、视觉符号、包装及线下应用的系统延展。',
+          pages: ganbeiPages
+        },
+        {
+          index: '03',
+          title: '尢本电商视觉规范',
+          type: 'E-COMMERCE VISUAL SYSTEM',
+          description: '围绕健康产品建立从品牌理念、详情页逻辑到主图、KV、主题活动和产品场景图的电商视觉规范。',
+          pages: youbenCommercePages
+        },
+        {
+          index: '04',
+          title: '习水兰苑社区品牌标识',
+          type: 'COMMUNITY IDENTITY',
+          description: '融合党旗、和平鸽、水波纹与居民家园等符号，形成兼顾党建引领、社区包容与宜居感的标识及应用系统。',
+          pages: communityLogoPages
+        },
+        {
+          index: '05',
+          title: '杠上开花品牌视觉提案',
+          type: 'YOUTH & NEW MEDIA BRANDING',
+          description: '以麻将文化、年轻社交和新媒体语境为核心，通过高识别配色、字体组合与图形节奏塑造活泼的品牌表达。',
+          pages: gangshangKaihuaPages
+        }
+      ]
+    }
   },
   {
     id: '02',
-    title: '乾杯醺茶\n品牌视觉',
-    type: '茶饮 / 国风 / 品牌',
-    meta: '乾杯醺茶品牌视觉系统与国风茶饮场景延展',
-    className: 'project-ai',
-    cover: ganbeiPages[0],
-    pages: ganbeiPages
-  },
-  {
-    id: '03',
-    title: 'Corporate Visual Design',
+    title: '品牌宣传\n与视觉物料',
     type: '品牌宣传 / 活动物料 / UI',
     meta: '集团内外宣与产品界面支持',
     className: 'project-corp'
   },
   {
-    id: '04',
+    id: '03',
     title: '包装设计',
     type: '包装系统 / 礼盒',
     meta: '医美包装与礼盒包装延展',
     className: 'project-packaging',
     cover: packagingCover,
-    pages: packagingPages
+    pages: packagingPages,
+    packagingCase: {
+      summary: '从品牌概念、包装视觉到效果呈现，围绕医美、节礼与酒类产品完成多类型包装设计，兼顾识别度、信息层级与商业陈列效果。',
+      role: '视觉概念 · 包装版式 · 系列延展 · 效果呈现',
+      stats: [
+        ['4', '组包装项目'],
+        ['30', '张设计展示'],
+        ['4', '类产品场景']
+      ],
+      projects: [
+        {
+          index: '01',
+          title: 'UNINO 医美套盒',
+          type: 'MEDICAL AESTHETICS',
+          description: '以克制的蓝白配色、压凹工艺与几何比例构建专业医美产品形象，并延展至内外盒结构及应用场景。',
+          pages: packagingPages.slice(0, 5)
+        },
+        {
+          index: '02',
+          title: '中秋礼盒设计',
+          type: 'FESTIVAL GIFT BOX',
+          description: '从书法字形、传统印章与山水意象出发，建立东方节礼视觉语言，并完成包装展开与礼赠物料延展。',
+          pages: packagingPages.slice(5, 12)
+        },
+        {
+          index: '03',
+          title: '酒类包装视觉',
+          type: 'LIQUOR PACKAGING',
+          description: '提取地域建筑与文化符号，形成瓶标、插画、配色及外盒版式的统一系统。',
+          pages: packagingPages.slice(12, 16)
+        },
+        {
+          index: '04',
+          title: '商业包装精选',
+          type: 'SELECTED COMMERCIAL WORK',
+          description: '收录节日礼盒与医美产品两类短项目，以更紧凑的方式展示不同品类下的视觉适配和成品表现。',
+          pages: [...gangshangPackagingPages, ...packagingPages.slice(16, 19), ...packagingExtraPages],
+          groups: [
+            {
+              title: '杠上开花节礼系列',
+              label: 'SEASONAL GIFT BOX',
+              pages: [...gangshangPackagingPages, ...packagingPages.slice(16, 19)]
+            },
+            {
+              title: '医美产品包装延展',
+              label: 'MEDICAL PRODUCT PACKAGING',
+              pages: packagingExtraPages
+            }
+          ]
+        }
+      ]
+    }
   },
   {
-    id: '05',
-    title: 'Social Media Kit',
-    type: '小红书 / 公众号 / 内容栏目',
-    meta: '社媒视觉模板与运营内容体系',
-    className: 'project-social'
-  },
-  {
-    id: '06',
-    title: 'Event Visuals',
-    type: '展会主视觉 / 物料 / 美陈',
-    meta: '活动场景视觉与线下物料落地',
-    className: 'project-event'
+    id: '04',
+    title: '小红书\n内容设计',
+    type: '选题策划 / 封面设计 / 多图内容',
+    meta: '从选题到整套视觉，构建设计知识型社媒内容',
+    className: 'project-social',
+    cover: xhsGridPages[0],
+    pages: [...xhsGridPages, ...xhsHalftonePages],
+    socialCase: {
+      period: '2024.10.10 — 至今',
+      role: '内容选题策划 · 封面设计 · 多图内容制作',
+      summary: '从选题判断、信息拆解到整套图片制作，持续输出设计教程、排版方法与审美灵感，建立兼顾点击识别、阅读节奏和收藏价值的内容体系。',
+      stats: [
+        ['28', '组内容选题'],
+        ['130+', '张视觉内容'],
+        ['1.4万', '账号累计获赞与收藏']
+      ],
+      highlights: [
+        {
+          index: '01',
+          kicker: 'TOP-PERFORMING CONTENT',
+          title: '排版那些事儿｜网格系统',
+          metric: '1296 点赞 · 1080 收藏',
+          description: '把抽象的网格知识拆解成 7 张连续图文，通过统一橙色视觉、明确层级和步骤化结构提升理解与收藏价值；收藏量接近点赞量，体现了教程内容的长期实用性。',
+          pages: xhsGridPages
+        },
+        {
+          index: '02',
+          kicker: 'HIGH-ENGAGEMENT CONTENT',
+          title: '彩色半调｜视觉教程',
+          metric: '公开点赞约 910',
+          description: '以彩色半调这一流行视觉效果切入，用生活化主题降低教程距离感；从封面吸引到步骤展示形成完整阅读路径。',
+          pages: xhsHalftonePages
+        },
+        {
+          index: '03',
+          kicker: 'TOOL-BASED CONTENT',
+          title: 'Figma 插件｜工具型内容',
+          metric: '公开点赞约 151',
+          description: '从设计师的真实效率需求出发策划选题，用高信息密度封面明确内容价值，再以 9 张图完成工具筛选与介绍。',
+          pages: xhsFigmaPluginPages
+        },
+        {
+          index: '04',
+          kicker: 'COLOR & INSPIRATION',
+          title: '春日调色盘｜系列栏目',
+          metric: '9 张配色内容',
+          description: '围绕季节情绪策划配色主题，用色值、色块与应用画面组成可直接收藏和复用的灵感内容。',
+          pages: xhsSpringColorPages
+        }
+      ],
+      collections: [
+        {
+          title: '排版与字体',
+          description: '把专业排版方法转化为可快速理解和练习的移动端内容。',
+          items: [
+            { title: '标题设计感', cover: xhsTitleDesignPages[0] },
+            { title: '免费商用字体', cover: xhsFontSharePages[0] },
+            { title: '作品集封面参考', cover: xhsPortfolioCoverPages[0] },
+            { title: '画面太空怎么办', cover: xhsEmptySpacePages[0] }
+          ]
+        },
+        {
+          title: '设计工具与制作技巧',
+          description: '以明确结果为入口，用步骤化内容降低软件学习门槛。',
+          items: [
+            { title: 'Figma 分型效果', cover: xhsFigmaSplitPages[0] },
+            { title: 'Figma 通透感按钮', cover: xhsFigmaButtonPages[0] },
+            { title: '动态轻透质感卡片', cover: xhsFigmaCardPages[0] },
+            { title: '照片变氛围感海报', cover: xhsPosterPages[0] }
+          ]
+        },
+        {
+          title: '配色与审美灵感',
+          description: '通过主题化收集、筛选与再编排，建立稳定更新的灵感栏目。',
+          items: [
+            { title: '饭圈配色', cover: xhsKpopColorPages[0] },
+            { title: '圣诞节配色', cover: xhsChristmasColorPages[0] },
+            { title: '视觉公众号参考', cover: xhsVisualAccountsPages[0] },
+            { title: '日常素材收集', cover: xhsDailyInspirationPages[0] },
+            { title: '设计灵感网站', cover: xhsWebsitesPages[0] },
+            { title: 'Jellycat 创意内容', cover: xhsJellycatPages[0] },
+            { title: '品牌新五感', cover: xhsBrandPages[0] }
+          ]
+        }
+      ]
+    }
   }
 ];
 
@@ -261,7 +476,7 @@ function App() {
       if (cancelled) return;
       setCriticalAssetsReady(true);
       setLoadSafetyReleased(true);
-    }, 8000);
+    }, 2500);
     const preloadImage = (src) => new Promise((resolve) => {
       const image = new Image();
       const finish = () => resolve();
@@ -297,13 +512,13 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (!criticalAssetsReady || (!lanyardVisualReady && !loadSafetyReleased)) return undefined;
+    if (!criticalAssetsReady && !loadSafetyReleased) return undefined;
     if (loadFinishStartedAtRef.current === null) {
       loadFinishFromRef.current = loadProgressRef.current;
       loadFinishStartedAtRef.current = performance.now();
     }
     return undefined;
-  }, [criticalAssetsReady, lanyardVisualReady, loadSafetyReleased]);
+  }, [criticalAssetsReady, loadSafetyReleased]);
 
   useEffect(() => {
     const cursor = siteCursorRef.current;
@@ -745,8 +960,9 @@ function App() {
               </div>
             </div>
           </TiltedCard>
-          <div>
-            <h2>科班出身的复合型设计师，长期关注品牌、包装与新视觉工具。</h2>
+          <div className="profileIntro">
+            <span className="profileIntroLabel">CORE PROFILE</span>
+            <h2>科班出身的 <em>复合型设计师</em><span>长期关注品牌、包装与新视觉工具。</span></h2>
             <p>
               我对事物保持热情与好奇，也相信审美并非单一存在。电影、展览、音乐、live house 与摄影作品都会成为设计判断的一部分。希望在更长的设计路上，创造出更多可能性。
             </p>
@@ -892,7 +1108,7 @@ function App() {
           role="presentation"
         >
           <div
-            className="projectModal"
+            className={`projectModal ${activeProject.socialCase ? 'isSocialCase' : ''} ${activeProject.packagingCase ? 'isPackagingCase' : ''} ${activeProject.brandCase ? 'isBrandCase' : ''}`}
             role="dialog"
             aria-modal="true"
             aria-labelledby="project-modal-title"
@@ -914,18 +1130,215 @@ function App() {
               <p>{activeProject.type}</p>
             </header>
             <div className="projectModalScroll">
-              <div className="projectModalImages">
-                {activeProject.pages.map((page, index) => (
-                  <figure className="projectModalImage" key={page}>
-                    <img
-                      src={page}
-                      alt={`${activeProject.title.replace('\n', '')}作品页 ${index + 1}`}
-                      loading={index < 2 ? 'eager' : 'lazy'}
-                      decoding="async"
-                    />
-                  </figure>
-                ))}
-              </div>
+              {activeProject.socialCase ? (
+                <div className="xhsCase">
+                  <section className="xhsCaseIntro">
+                    <div className="xhsCaseIntroCopy">
+                      <span>PROJECT OVERVIEW</span>
+                      <p>{activeProject.socialCase.summary}</p>
+                    </div>
+                    <dl className="xhsCaseMeta">
+                      <div><dt>参与时间</dt><dd>{activeProject.socialCase.period}</dd></div>
+                      <div><dt>负责内容</dt><dd>{activeProject.socialCase.role}</dd></div>
+                    </dl>
+                    <div className="xhsCaseStats">
+                      {activeProject.socialCase.stats.map(([value, label]) => (
+                        <div key={label}><strong>{value}</strong><span>{label}</span></div>
+                      ))}
+                    </div>
+                    <small className="xhsCaseDisclosure">内容数量依据本次整理素材；账号累计数据与代表笔记数据均来自小红书公开页面。</small>
+                  </section>
+
+                  <section className="xhsCaseStrategy">
+                    <div><span>01</span><strong>教程与工具</strong><p>围绕 Figma、Illustrator 和实用设计效果，提供能被直接学习的步骤内容。</p></div>
+                    <div><span>02</span><strong>排版与字体</strong><p>拆解网格、标题、版式和字体应用，把专业知识转化为清晰图文。</p></div>
+                    <div><span>03</span><strong>配色与灵感</strong><p>以主题化收集和视觉再编排，持续输出可收藏、可复用的审美参考。</p></div>
+                  </section>
+
+                  <section className="xhsHighlights">
+                    <div className="xhsSectionHeading">
+                      <span>SELECTED CONTENT</span>
+                      <h3>高互动内容与完整系列</h3>
+                    </div>
+                    {activeProject.socialCase.highlights.map((highlight) => (
+                      <article className="xhsHighlight" key={highlight.index}>
+                        <header>
+                          <span>{highlight.index} / {highlight.kicker}</span>
+                          <h4>{highlight.title}</h4>
+                          <strong>{highlight.metric}</strong>
+                          <p>{highlight.description}</p>
+                        </header>
+                        <div className={`xhsImageGrid ${highlight.pages.length === 1 ? 'isSingle' : ''}`}>
+                          {highlight.pages.map((page, index) => (
+                            <figure key={page}>
+                              <img src={page} alt={`${highlight.title} 第 ${index + 1} 张`} loading="lazy" decoding="async" />
+                            </figure>
+                          ))}
+                        </div>
+                      </article>
+                    ))}
+                  </section>
+
+                  <section className="xhsCollections">
+                    <div className="xhsSectionHeading">
+                      <span>CONTENT SYSTEM</span>
+                      <h3>内容栏目与视觉覆盖</h3>
+                    </div>
+                    {activeProject.socialCase.collections.map((collection) => (
+                      <article className="xhsCollectionGroup" key={collection.title}>
+                        <header>
+                          <h4>{collection.title}</h4>
+                          <p>{collection.description}</p>
+                        </header>
+                        <div className="xhsCollectionGrid">
+                          {collection.items.map((item) => (
+                            <figure key={item.title}>
+                              <img src={item.cover} alt={item.title} loading="lazy" decoding="async" />
+                              <figcaption>{item.title}</figcaption>
+                            </figure>
+                          ))}
+                        </div>
+                      </article>
+                    ))}
+                  </section>
+
+                  <section className="xhsVideoCase">
+                    <div>
+                      <span>MOTION CONTENT</span>
+                      <h3>原创蛇年红包</h3>
+                      <p>将节日节点、像素视觉和互动概念结合为动态内容，扩展账号的内容形式。</p>
+                      <a href="https://www.xiaohongshu.com/user/profile/634adf7f000000001901db67" target="_blank" rel="noreferrer">查看小红书主页 <ArrowUpRight size={16} /></a>
+                    </div>
+                    <video controls playsInline preload="metadata" poster={xhsRedPacket}>
+                      <source src={xhsRedPacketVideo} type="video/mp4" />
+                    </video>
+                  </section>
+                </div>
+              ) : activeProject.brandCase ? (
+                <div className="brandCase">
+                  <section className="xhsCaseIntro brandCaseIntro">
+                    <div className="xhsCaseIntroCopy">
+                      <span>PROJECT OVERVIEW</span>
+                      <p>{activeProject.brandCase.summary}</p>
+                    </div>
+                    <dl className="xhsCaseMeta">
+                      <div><dt>项目类型</dt><dd>医美品牌 · 国风茶饮</dd></div>
+                      <div><dt>负责内容</dt><dd>{activeProject.brandCase.role}</dd></div>
+                    </dl>
+                    <div className="xhsCaseStats">
+                      {activeProject.brandCase.stats.map(([value, label]) => (
+                        <div key={label}><strong>{value}</strong><span>{label}</span></div>
+                      ))}
+                    </div>
+                  </section>
+
+                  <section className="xhsCaseStrategy brandCaseStrategy">
+                    <div><span>01</span><strong>品牌定位转译</strong><p>从行业属性、受众与场景出发，把抽象的品牌方向转化为可被感知的视觉气质。</p></div>
+                    <div><span>02</span><strong>识别系统建立</strong><p>通过标识、字体、色彩与图形语言形成稳定的品牌识别，并保持系列一致性。</p></div>
+                    <div><span>03</span><strong>商业场景延展</strong><p>把核心视觉应用到包装、宣传物料与空间触点，验证系统在真实场景中的适应性。</p></div>
+                  </section>
+
+                  <section className="packagingProjects brandProjects">
+                    <div className="xhsSectionHeading">
+                      <span>SELECTED BRAND SYSTEMS</span>
+                      <h3>品牌案例与视觉延展</h3>
+                    </div>
+                    {activeProject.brandCase.projects.map((item) => (
+                      <article className="packagingProject brandProject" key={item.index}>
+                        <header>
+                          <span>{item.index} / {item.type}</span>
+                          <h4>{item.title}</h4>
+                          <p>{item.description}</p>
+                        </header>
+                        <div className="packagingProjectGrid brandProjectGrid">
+                          {item.pages.map((page, index) => (
+                            <figure key={page}>
+                              <img src={page} alt={`${item.title}作品图 ${index + 1}`} loading="lazy" decoding="async" />
+                            </figure>
+                          ))}
+                        </div>
+                      </article>
+                    ))}
+                  </section>
+                </div>
+              ) : activeProject.packagingCase ? (
+                <div className="packagingCase">
+                  <section className="xhsCaseIntro packagingCaseIntro">
+                    <div className="xhsCaseIntroCopy">
+                      <span>PROJECT OVERVIEW</span>
+                      <p>{activeProject.packagingCase.summary}</p>
+                    </div>
+                    <dl className="xhsCaseMeta packagingCaseMeta">
+                      <div><dt>项目类型</dt><dd>医美包装 · 节日礼盒 · 酒类包装</dd></div>
+                      <div><dt>负责内容</dt><dd>{activeProject.packagingCase.role}</dd></div>
+                    </dl>
+                    <div className="xhsCaseStats">
+                      {activeProject.packagingCase.stats.map(([value, label]) => (
+                        <div key={label}><strong>{value}</strong><span>{label}</span></div>
+                      ))}
+                    </div>
+                  </section>
+
+                  <section className="xhsCaseStrategy packagingCaseStrategy">
+                    <div><span>01</span><strong>品牌语言提炼</strong><p>从产品定位与使用场景出发，确定包装的核心气质、识别符号与色彩系统。</p></div>
+                    <div><span>02</span><strong>包装系统延展</strong><p>把视觉概念落实到盒型、瓶标、内外包装及系列版本，保持信息层级统一。</p></div>
+                    <div><span>03</span><strong>商业效果呈现</strong><p>通过效果图、材质与陈列场景展示设计落地后的真实质感与货架表现。</p></div>
+                  </section>
+
+                  <section className="packagingProjects">
+                    <div className="xhsSectionHeading">
+                      <span>SELECTED PACKAGING</span>
+                      <h3>包装项目与系列延展</h3>
+                    </div>
+                    {activeProject.packagingCase.projects.map((item) => (
+                      <article className="packagingProject" key={item.index}>
+                        <header>
+                          <span>{item.index} / {item.type}</span>
+                          <h4>{item.title}</h4>
+                          <p>{item.description}</p>
+                        </header>
+                        {item.groups ? (
+                          <div className="packagingSubgroups">
+                            {item.groups.map((group) => (
+                              <section className="packagingSubgroup" key={group.title}>
+                                <header><span>{group.label}</span><h5>{group.title}</h5></header>
+                                <div className="packagingProjectGrid">
+                                  {group.pages.map((page, index) => (
+                                    <figure key={page}>
+                                      <img src={page} alt={`${group.title}作品图 ${index + 1}`} loading="lazy" decoding="async" />
+                                    </figure>
+                                  ))}
+                                </div>
+                              </section>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className={`packagingProjectGrid ${item.pages.length === 1 ? 'isSingle' : ''}`}>
+                            {item.pages.map((page, index) => (
+                              <figure key={page}>
+                                <img src={page} alt={`${item.title}作品图 ${index + 1}`} loading="lazy" decoding="async" />
+                              </figure>
+                            ))}
+                          </div>
+                        )}
+                      </article>
+                    ))}
+                  </section>
+                </div>
+              ) : (
+                <div className="projectModalImages">
+                  {activeProject.pages.map((page, index) => (
+                    <figure className="projectModalImage" key={page}>
+                      <img
+                        src={page}
+                        alt={`${activeProject.title.replace('\n', '')}作品页 ${index + 1}`}
+                        loading={index < 2 ? 'eager' : 'lazy'}
+                        decoding="async"
+                      />
+                    </figure>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>

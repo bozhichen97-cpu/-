@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { gsap } from 'gsap';
 import './PillNav.css';
 
@@ -177,21 +178,24 @@ const PillNav = ({
         </button>
       </nav>
 
-      <div className={`mobile-menu-popover mobile-only${isMobileMenuOpen ? ' is-open' : ''}`} style={cssVars}>
-        <ul className="mobile-menu-list">
-          {items.map((item, i) => (
-            <li key={item.href || `mobile-item-${i}`}>
-              <a
-                href={item.href}
-                className={`mobile-menu-link${activeHref === item.href ? ' is-active' : ''}`}
-                onClick={(event) => handleMobileNavigate(event, item.href)}
-              >
-                {item.label}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </div>
+      {createPortal(
+        <div className={`mobile-menu-popover mobile-only${isMobileMenuOpen ? ' is-open' : ''}`} style={cssVars}>
+          <ul className="mobile-menu-list">
+            {items.map((item, i) => (
+              <li key={item.href || `mobile-item-${i}`}>
+                <a
+                  href={item.href}
+                  className={`mobile-menu-link${activeHref === item.href ? ' is-active' : ''}`}
+                  onClick={(event) => handleMobileNavigate(event, item.href)}
+                >
+                  {item.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>,
+        document.body
+      )}
     </div>
   );
 };

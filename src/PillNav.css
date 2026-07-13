@@ -249,6 +249,12 @@
 
   .mobile-menu-popover {
     display: none;
+    position: fixed;
+    top: 92px;
+    left: 12px;
+    right: 12px;
+    width: auto;
+    z-index: 1300;
   }
 
   .mobile-menu-popover.is-open {
