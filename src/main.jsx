@@ -227,7 +227,7 @@ const projects = [
     type: '选题策划 / 封面设计 / 多图内容',
     meta: '从选题到整套视觉，构建设计知识型社媒内容',
     className: 'project-social',
-    cover: xhsGridPages[0],
+    cover: xhsGridPages[xhsGridPages.length - 1],
     pages: [...xhsGridPages, ...xhsHalftonePages],
     socialCase: {
       period: '2024.10.10 — 至今',
