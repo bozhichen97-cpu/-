@@ -207,9 +207,17 @@ const projects = [
           pages: [...gangshangPackagingPages, ...packagingPages.slice(16, 19), ...packagingExtraPages],
           groups: [
             {
-              title: '杠上开花节礼系列',
-              label: 'SEASONAL GIFT BOX',
-              pages: [...gangshangPackagingPages, ...packagingPages.slice(16, 19)]
+              title: '杠上开花 · 2023 节礼与周边',
+              label: '2023 SEASONAL EXTENSIONS',
+              pages: [
+                ...gangshangPackagingPages.slice(0, 4),
+                ...gangshangPackagingPages.slice(5, 7)
+              ]
+            },
+            {
+              title: '杠上开花 · 2024 龙年大礼包',
+              label: '2024 DRAGON YEAR GIFT BOX',
+              pages: [gangshangPackagingPages[4], ...packagingPages.slice(16, 19)]
             },
             {
               title: '医美产品包装延展',
