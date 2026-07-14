@@ -14,6 +14,7 @@ import badgeFront from './assets/badge-front.webp';
 import bellonaCoverClean from './assets/bellona-cover-clean.webp';
 import profileEditorial from './assets/profile-final.webp';
 import packagingCover from './assets/packaging-cover.webp';
+import promoCoverSeabirds from './assets/promo-cover-seabirds.jpg';
 import wechatQr from './assets/contact/wechat-qr.webp';
 import xiaohongshuQr from './assets/contact/xiaohongshu-qr.webp';
 import xhsRedPacket from './assets/xiaohongshu/red-packet.jpg';
@@ -67,6 +68,31 @@ const bellonaViPages = loadBrandPdfSeries('bellona-vi');
 const communityLogoPages = loadBrandPdfSeries('community-logo');
 const gangshangKaihuaPages = loadBrandPdfSeries('gangshang-kaihua');
 const youbenCommercePages = loadBrandPdfSeries('youben-commerce');
+
+const loadPromoSeries = (folder) => Object.entries(
+  import.meta.glob('./assets/promo/*/*.{webp,jpg,jpeg,png}', { eager: true, import: 'default' })
+)
+  .filter(([path]) => path.includes(`/promo/${folder}/`))
+  .sort(([a], [b]) => a.localeCompare(b))
+  .map(([, page]) => page);
+
+const promoCityDiarySource = loadPromoSeries('city-diary');
+const promoCityDiaryPages = [
+  promoCityDiarySource[1], promoCityDiarySource[0],
+  promoCityDiarySource[3], promoCityDiarySource[2],
+  promoCityDiarySource[4], promoCityDiarySource[5],
+  promoCityDiarySource[6], promoCityDiarySource[7]
+].filter(Boolean);
+const promoHuoshanPages = loadPromoSeries('huoshan-bake');
+const promoIoVintagePages = loadPromoSeries('io-vintage');
+const promoIpPages = loadPromoSeries('ip');
+const promoLizhiTeaPages = loadPromoSeries('lizhi-tea');
+const promoManCardH5Pages = loadPromoSeries('man-card-h5');
+const promoManCardIllustrationPages = loadPromoSeries('man-card-illustration');
+const promoManCardXhsPages = loadPromoSeries('man-card-xhs');
+const promoManualPages = loadPromoSeries('manuals');
+const promoSuperColleaguePages = loadPromoSeries('super-colleague');
+const promoYiliPages = loadPromoSeries('yili');
 
 const loadXhsSeries = (pattern) => Object.entries(
   import.meta.glob('./assets/xiaohongshu/*/*.jpg', { eager: true, import: 'default' })
@@ -156,10 +182,116 @@ const projects = [
   },
   {
     id: '02',
-    title: '品牌宣传\n与视觉物料',
-    type: '品牌宣传 / 活动物料 / UI',
-    meta: '集团内外宣与产品界面支持',
-    className: 'project-corp'
+    title: '品牌传播设计',
+    singleLineTitle: true,
+    type: '主视觉 / 社媒内容 / IP 延展 / 产品手册',
+    meta: '从活动主视觉到内容矩阵，建立多场景品牌传播表达',
+    className: 'project-corp',
+    cover: promoCoverSeabirds,
+    pages: [
+      ...promoYiliPages,
+      ...promoSuperColleaguePages,
+      ...promoLizhiTeaPages,
+      ...promoManCardIllustrationPages,
+      ...promoManCardXhsPages,
+      ...promoManCardH5Pages,
+      ...promoIpPages,
+      ...promoCityDiaryPages,
+      ...promoIoVintagePages,
+      ...promoHuoshanPages,
+      ...promoManualPages
+    ],
+    promoCase: {
+      summary: '作品按照原始文件夹独立归类，覆盖活动 KV、电子屏、品牌海报、社媒内容、IP 延展、视觉实验、产品手册与餐饮视觉，完整呈现不同项目中的设计执行与延展能力。',
+      role: '创意构思 · 视觉设计 · 社媒内容 · IP 延展 · 手册编排',
+      stats: [
+        ['11', '个独立分类'],
+        ['240+', '张视觉展示'],
+        ['9', '册产品手册']
+      ],
+      projects: [
+        {
+          index: '01',
+          title: '伊利 · 拜年 KV',
+          type: 'FESTIVAL KEY VISUAL',
+          description: '围绕春节拜年主题完成明星主视觉与系列人物版式，保持节日氛围、品牌色彩与传播信息统一。',
+          pages: promoYiliPages
+        },
+        {
+          index: '02',
+          title: '超能同事',
+          type: 'EVENT SCREEN VISUAL',
+          description: '面向活动现场电子屏设计主题视觉，在大画幅场景中强化人物、标题与科技氛围的视觉冲击。',
+          pages: promoSuperColleaguePages
+        },
+        {
+          index: '03',
+          title: '荔制茶',
+          type: 'PRODUCT POSTER',
+          description: '以清爽植物感与产品氛围为核心完成茶饮海报，突出原料、口感与季节气息。',
+          pages: promoLizhiTeaPages
+        },
+        {
+          index: '04',
+          title: '漫名片插画海报',
+          type: 'ILLUSTRATION POSTER',
+          description: '通过明快插画、人物场景与短文案表达产品功能，让品牌传播更轻松、更具亲和力。',
+          pages: promoManCardIllustrationPages
+        },
+        {
+          index: '05',
+          title: '漫名片小红书',
+          type: 'SOCIAL MEDIA CONTENT',
+          description: '围绕功能卖点、使用场景和节日节点持续输出小红书视觉内容，建立统一的产品传播面貌。',
+          pages: promoManCardXhsPages
+        },
+        {
+          index: '06',
+          title: '漫名片朋友圈广告',
+          type: 'MOMENTS ADVERTISING',
+          description: '针对朋友圈信息流与 H5 场景整理卖点层级，在有限画面中兼顾品牌识别和转化信息。',
+          pages: promoManCardH5Pages
+        },
+        {
+          index: '07',
+          title: 'IP 形象延展',
+          type: 'IP CHARACTER EXTENSION',
+          description: '围绕漫仔 IP 进行服装、动作、道具和职业场景延展，让品牌角色适配不同传播主题。',
+          pages: promoIpPages
+        },
+        {
+          index: '08',
+          title: '城市观察日记',
+          type: 'CITY VISUAL DIARY',
+          description: '从日常摄影出发，将海鸟、滑梯、街景与黑天鹅等观察转化为具有情绪和叙事感的视觉海报。',
+          pages: promoCityDiaryPages,
+          layout: 'pairs',
+          labels: ['海鸟诗行 · 原图', '海鸟诗行 · 海报', '黑天鹅 · 原图', '黑天鹅 · 海报', '滑梯 · 原图', '滑梯 · 海报', '下班的日常 · 原图', '下班的日常 · 海报']
+        },
+        {
+          index: '09',
+          title: 'IO VINTAGE',
+          type: 'EDITORIAL EXPERIMENT',
+          description: '通过复古图像、英文排版与编辑设计语言进行系列视觉实验，探索更具个性的画面节奏。',
+          pages: promoIoVintagePages
+        },
+        {
+          index: '10',
+          title: '公司手册',
+          type: 'PRODUCT BROCHURE',
+          description: '完整展示 9 册医美产品手册与手卡，从封面、产品信息到成分、功效和使用场景进行系统编排。',
+          pages: promoManualPages,
+          layout: 'compact'
+        },
+        {
+          index: '11',
+          title: '火山烤',
+          type: 'FOOD BRAND VISUAL',
+          description: '围绕餐饮品牌完成品牌氛围、菜单内容与产品场景的连续视觉表达。',
+          pages: promoHuoshanPages
+        }
+      ]
+    }
   },
   {
     id: '03',
@@ -1134,7 +1266,7 @@ function App() {
           role="presentation"
         >
           <div
-            className={`projectModal ${activeProject.socialCase ? 'isSocialCase' : ''} ${activeProject.packagingCase ? 'isPackagingCase' : ''} ${activeProject.brandCase ? 'isBrandCase' : ''}`}
+            className={`projectModal ${activeProject.socialCase ? 'isSocialCase' : ''} ${activeProject.packagingCase ? 'isPackagingCase' : ''} ${activeProject.brandCase ? 'isBrandCase' : ''} ${activeProject.promoCase ? 'isPromoCase' : ''}`}
             role="dialog"
             aria-modal="true"
             aria-labelledby="project-modal-title"
@@ -1238,6 +1370,54 @@ function App() {
                     <video controls playsInline preload="metadata" poster={xhsRedPacket}>
                       <source src={xhsRedPacketVideo} type="video/mp4" />
                     </video>
+                  </section>
+                </div>
+              ) : activeProject.promoCase ? (
+                <div className="promoCase">
+                  <section className="xhsCaseIntro promoCaseIntro">
+                    <div className="xhsCaseIntroCopy">
+                      <span>PROJECT OVERVIEW</span>
+                      <p>{activeProject.promoCase.summary}</p>
+                    </div>
+                    <dl className="xhsCaseMeta">
+                      <div><dt>项目类型</dt><dd>品牌活动 · 社媒内容 · IP 与手册</dd></div>
+                      <div><dt>负责内容</dt><dd>{activeProject.promoCase.role}</dd></div>
+                    </dl>
+                    <div className="xhsCaseStats">
+                      {activeProject.promoCase.stats.map(([value, label]) => (
+                        <div key={label}><strong>{value}</strong><span>{label}</span></div>
+                      ))}
+                    </div>
+                  </section>
+
+                  <section className="xhsCaseStrategy promoCaseStrategy">
+                    <div><span>01</span><strong>传播目标转译</strong><p>从活动主题、产品卖点和受众场景出发，提炼清晰的传播重点与视觉方向。</p></div>
+                    <div><span>02</span><strong>内容矩阵搭建</strong><p>围绕不同渠道规划主视觉、社媒海报、朋友圈广告与产品内容，保持连续表达。</p></div>
+                    <div><span>03</span><strong>多场景视觉延展</strong><p>将核心视觉延展至线上线下物料、IP 角色与产品手册，兼顾识别度与实际应用。</p></div>
+                  </section>
+
+                  <section className="packagingProjects promoProjects">
+                    <div className="xhsSectionHeading">
+                      <span>SELECTED COMMUNICATION</span>
+                      <h3>品牌传播与视觉内容</h3>
+                    </div>
+                    {activeProject.promoCase.projects.map((item) => (
+                      <article className="packagingProject promoProject" key={item.index}>
+                        <header>
+                          <span>{item.index} / {item.type}</span>
+                          <h4>{item.title}</h4>
+                          <p>{item.description}</p>
+                        </header>
+                        <div className={`packagingProjectGrid promoProjectGrid ${item.pages.length === 1 ? 'isSingle' : ''} ${item.layout === 'pairs' ? 'isPairs' : ''} ${item.layout === 'compact' ? 'isCompact' : ''}`}>
+                          {item.pages.map((page, index) => (
+                            <figure key={page}>
+                              <img src={page} alt={`${item.title}作品图 ${index + 1}`} loading="lazy" decoding="async" />
+                              {item.labels?.[index] && <figcaption>{item.labels[index]}</figcaption>}
+                            </figure>
+                          ))}
+                        </div>
+                      </article>
+                    ))}
                   </section>
                 </div>
               ) : activeProject.brandCase ? (

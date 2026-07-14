@@ -1688,9 +1688,15 @@ main {
   height: min(92vh, 940px);
 }
 
+.projectModal.isPromoCase {
+  width: min(1180px, calc(100vw - 72px));
+  height: min(92vh, 940px);
+}
+
 .projectModal.isSocialCase .projectModalScroll,
 .projectModal.isPackagingCase .projectModalScroll,
-.projectModal.isBrandCase .projectModalScroll {
+.projectModal.isBrandCase .projectModalScroll,
+.projectModal.isPromoCase .projectModalScroll {
   padding: 0;
   scroll-snap-type: none;
 }
@@ -2164,12 +2170,30 @@ main {
   color: #f3f1eb;
 }
 
+.promoCase {
+  color: #f3f1eb;
+}
+
 .brandCaseIntro {
   background:
     radial-gradient(circle at 84% 12%, rgba(227, 39, 45, 0.28), transparent 31%),
     radial-gradient(circle at 72% 46%, rgba(214, 165, 87, 0.12), transparent 28%),
     linear-gradient(135deg, rgba(255,255,255,0.08), transparent 50%),
     #0a0a0a;
+}
+
+.promoCaseIntro {
+  background:
+    radial-gradient(circle at 86% 12%, rgba(227, 39, 45, 0.34), transparent 31%),
+    radial-gradient(circle at 72% 46%, rgba(44, 201, 255, 0.12), transparent 28%),
+    linear-gradient(135deg, rgba(255,255,255,0.08), transparent 50%),
+    #0a0a0a;
+}
+
+.promoCaseStrategy span,
+.promoProjects .xhsSectionHeading > span,
+.promoCaseIntro .xhsCaseStats strong {
+  color: #e3272d;
 }
 
 .packagingCaseIntro {
@@ -2255,6 +2279,60 @@ main {
   display: block;
   width: 100%;
   height: auto;
+}
+
+.promoProjectGrid {
+  display: block;
+  columns: 3;
+  column-gap: 14px;
+}
+
+.promoProjectGrid figure,
+.promoProjectGrid figure:first-child {
+  display: block;
+  grid-column: auto;
+  break-inside: avoid;
+  margin: 0 0 14px;
+  aspect-ratio: auto;
+  background: #f2f0eb;
+}
+
+.promoProjectGrid img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: initial;
+}
+
+.promoProjectGrid.isSingle {
+  columns: 1;
+  max-width: 780px;
+}
+
+.promoProjectGrid.isCompact {
+  display: block;
+  columns: 4;
+}
+
+.promoProjectGrid.isPairs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  columns: auto;
+  gap: 18px 14px;
+}
+
+.promoProjectGrid.isPairs figure {
+  margin: 0;
+}
+
+.promoProjectGrid figcaption {
+  padding: 9px 12px 10px;
+  color: #4f4b47;
+  background: #f2f0eb;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
 }
 
 .packagingSubgroups {
@@ -3154,6 +3232,11 @@ main {
     height: calc(100dvh - 20px);
   }
 
+  .projectModal.isPromoCase {
+    width: calc(100vw - 20px);
+    height: calc(100dvh - 20px);
+  }
+
   .projectModalLayer {
     display: flex;
     align-items: center;
@@ -3224,6 +3307,22 @@ main {
 
   .packagingProjectGrid figure:first-child {
     grid-column: auto;
+  }
+
+  .promoProjectGrid {
+    columns: 1;
+  }
+
+  .promoProjectGrid.isCompact {
+    display: block;
+    columns: 2;
+    column-gap: 8px;
+  }
+
+  .promoProjectGrid.isCompact figure,
+  .promoProjectGrid.isCompact figure:first-child {
+    margin: 0 0 8px;
+    border-radius: 8px;
   }
 
   .packagingSubgroup {
